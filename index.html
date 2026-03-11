@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warranto — Never lose a warranty again</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-deep:#0D47A1; --blue-mid:#1565C0; --blue-bright:#1E88E5;
+      --blue-light:#BBDEFB; --off-white:#F7F9FC; --text:#1A1F2E;
+      --text-muted:#5A6072; --accent:#00B0FF; --radius:16px;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #0D47A1 0%, #1E88E5 60%, #29B6F6 100%);
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::after {
+      content: '';
+      position: absolute;
+      bottom: -5px; left: 0; right: 0;
+      height: 120px;
+      background: #F7F9FC;
+      clip-path: ellipse(60% 100% at 50% 100%);
+      z-index: 1;
+    }
+
+    /* ══ LANGUAGE SWITCHER — top left ══ */
+    .lang-switcher {
+      position: fixed;
+      top: 22px;
+      left: 48px;
+      z-index: 600;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .lang-flag {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      font-size: 1.15rem;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.12);
+      transition: all 0.18s;
+      text-decoration: none;
+      line-height: 1;
+    }
+    .lang-flag:hover { border-color: white; background: rgba(255,255,255,0.25); }
+    .lang-flag.active { border-color: white; background: rgba(255,255,255,0.35); box-shadow: 0 0 0 2px rgba(255,255,255,0.5); }
+    @media(max-width:768px){ .lang-switcher { left: 18px; top: 14px; } .lang-flag { width: 26px; height: 26px; font-size: 1rem; } }
+
+    /* ══ NAV — top right, no bar ══ */
+    nav {
+      position: fixed;
+      top: 0; right: 0;
+      z-index: 500;
+      padding: 20px 48px;
+      background: transparent;
+    }
+    .nav-links { display: flex; gap: 22px; list-style: none; align-items: center; }
+    .nav-links a {
+      text-decoration: none; font-size: .87rem; font-weight: 500;
+      color: white; opacity: .82; text-shadow: 0 1px 8px rgba(0,0,0,.6);
+      transition: opacity .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { opacity: 1; font-weight: 700; }
+    @media(max-width:768px){ nav { padding: 14px 18px; } .nav-links { gap: 12px; } .nav-links a { font-size: .74rem; } }
+
+    /* ══ HERO LAYOUT ══ */
+    .hero-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 140px 60px 180px 60px;
+      position: relative;
+      z-index: 10;
+    }
+    .hero-left {
+      flex: 1;
+      padding-right: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      margin-bottom: 30px;
+      width: 100%;
+    }
+    .logo-enorme {
+      width: 180px; height: 180px;
+      object-fit: cover;
+      border-radius: 40px;
+    }
+    .titolo-warranto {
+      font-family: 'Playfair Display', serif;
+      font-size: 8.5rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -3px;
+    }
+    .badges { display: flex; gap: 10px; margin-bottom: 25px; }
+    .badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; }
+    .badge.ios { opacity: 0.6; font-style: italic; }
+    .slogan { font-family: 'DM Serif Display', serif; font-size: 4.5rem; line-height: 1.1; margin-bottom: 20px; }
+    .slogan span { color: #81D4FA; font-style: italic; }
+    .descrizione { font-size: 1.25rem; line-height: 1.6; opacity: 0.9; margin-bottom: 40px; max-width: 600px; }
+    .pulsanti { display: flex; gap: 15px; }
+    .btn { padding: 16px 32px; border-radius: 30px; font-weight: 700; text-decoration: none; font-size: 16px; display: inline-flex; align-items: center; transition: transform 0.2s; }
+    .btn:hover { transform: translateY(-3px); }
+    .btn-download { background: white; color: #1565C0; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .btn-more { border: 1px solid white; color: white; }
+
+    /* ══ PHONE ══ */
+    .hero-right {
+      flex: 0 0 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .hint-telefono { font-size: 14px; margin-bottom: 15px; opacity: 0.9; text-align: center; }
+    .mockup-telefono {
+      width: 300px; height: 600px;
+      border-radius: 45px; padding: 12px;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+      text-decoration: none;
+      animation: galleggia 4s ease-in-out infinite;
+    }
+    @keyframes galleggia { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+    .schermo { background: #FEF7FF; width: 100%; height: 100%; border-radius: 35px; overflow: hidden; position: relative; color: black; font-family: Arial, sans-serif; }
+    .t-header { background: #4355B9; color: white; }
+    .t-status { padding: 8px 15px; display: flex; justify-content: space-between; font-size: 10px; font-weight: bold; }
+    .t-nav { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
+    .t-nav-title { font-size: 16px; font-weight: bold; }
+    .t-stats { display: flex; gap: 8px; padding: 0 15px 15px; }
+    .t-stat-box { flex: 1; background: rgba(255,255,255,0.2); border-radius: 10px; padding: 10px 5px; text-align: center; color: white; }
+    .t-stat-num { font-size: 20px; font-weight: bold; }
+    .t-stat-lbl { font-size: 8px; text-transform: uppercase; margin-top: 3px; font-weight: bold; opacity: 0.9; }
+    .t-section { padding: 12px 15px 5px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+    .t-section.orange { color: #E65100; }
+    .t-section.green { color: #2E7D32; }
+    .t-badge-num { color: white; padding: 2px 6px; border-radius: 10px; font-size: 9px; }
+    .t-badge-num.orange { background: #E65100; }
+    .t-badge-num.green { background: #2E7D32; }
+    .t-card { background: white; margin: 6px 15px; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .t-icon { width: 40px; height: 40px; background: #DEE0FF; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .t-info { flex: 1; }
+    .t-name { font-size: 12px; font-weight: bold; color: #1C1B1F; }
+    .t-cat { font-size: 10px; color: #46464F; margin-top: 2px; }
+    .t-date { font-size: 10px; font-weight: bold; margin-top: 4px; }
+    .t-date.orange { color: #E65100; }
+    .t-date.grey { color: #46464F; }
+    .t-days { border-radius: 10px; padding: 6px; text-align: center; width: 45px; flex-shrink: 0; }
+    .t-days.orange { background: #FFF3E0; border: 1px solid rgba(230,81,0,0.3); color: #E65100; }
+    .t-days.green { background: #E8F5E9; border: 1px solid rgba(46,125,50,0.3); color: #2E7D32; }
+    .t-days-num { font-size: 16px; font-weight: bold; line-height: 1; }
+    .t-days-lbl { font-size: 9px; font-weight: bold; }
+    .t-bottom-bar { position: absolute; bottom: 0; left: 0; width: 100%; background: #FEF7FF; display: flex; border-top: 1px solid #CAC4D0; padding: 10px 0; }
+    .t-tab { flex: 1; text-align: center; font-size: 10px; color: #46464F; font-weight: bold; }
+    .t-tab.active { color: #4355B9; }
+    .t-tab-icon { font-size: 18px; margin-bottom: 2px; }
+
+    @media(max-width:900px){
+      .hero-container { flex-direction: column; padding: 120px 30px 160px; }
+      .hero-left { padding-right: 0; margin-bottom: 40px; }
+      .titolo-warranto { font-size: 4rem; }
+      .slogan { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LANGUAGE SWITCHER — top left -->
+  <div class="lang-switcher" id="langSwitcher">
+    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
+    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
+    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
+    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
+    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
+    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+  </div>
+
+  <nav>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active" data-i18n="nav_home">Home</a></li>
+      <li><a href="demo.html" data-i18n="nav_demo">Demo</a></li>
+      <li><a href="premium.html" data-i18n="nav_premium">Premium</a></li>
+      <li><a href="info.html" data-i18n="nav_info">Info</a></li>
+      <li><a href="privacy.html" data-i18n="nav_privacy">Privacy</a></li>
+      <li><a href="contatti.html" data-i18n="nav_contact">Contatti</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero-container">
+    <div class="hero-left">
+      <div class="brand-group">
+        <img src="logo.png" alt="Logo" class="logo-enorme">
+        <div class="titolo-warranto">Warranto</div>
+      </div>
+      <div class="badges">
+        <span class="badge">🤖 Android</span>
+        <span class="badge ios" data-i18n="badge_ios">🍎 iOS — Coming Soon</span>
+      </div>
+      <h1 class="slogan" data-i18n="slogan">Never lose a <span data-i18n="slogan_span">warranty</span> again</h1>
+      <p class="descrizione" data-i18n="descrizione">Warranto keeps all your product warranties in one place. Get notified before they expire, archive receipts, and never miss a claim again.</p>
+      <div class="pulsanti">
+        <a href="https://play.google.com/store/apps/details?id=com.warranto.app" class="btn btn-download" data-i18n="btn_download">▶ Download free</a>
+        <a href="demo.html" class="btn btn-more" data-i18n="btn_more">Discover more ↓</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hint-telefono" data-i18n="hint_phone">👆 Tap the phone to try the app</div>
+      <a href="demo.html" class="mockup-telefono">
+        <div class="schermo">
+          <div class="t-header">
+            <div class="t-status"><span>9:41</span><span>●●● 🔋</span></div>
+            <div class="t-nav">
+              <span class="t-nav-title">Warranto</span>
+              <span>🔍 📊 ⚙</span>
+            </div>
+            <div class="t-stats">
+              <div class="t-stat-box"><div class="t-stat-num">6</div><div class="t-stat-lbl" data-i18n="stat_att">Attive</div></div>
+              <div class="t-stat-box"><div class="t-stat-num" style="color:#FFCC80">1</div><div class="t-stat-lbl" data-i18n="stat_exp">Scad.</div></div>
+              <div class="t-stat-box"><div class="t-stat-num" style="color:#EF9A9A">1</div><div class="t-stat-lbl" data-i18n="stat_sca">Scadute</div></div>
+            </div>
+          </div>
+          <div class="t-section orange">
+            <span style="font-size:14px">⚠</span> <span data-i18n="sec_exp">IN SCADENZA</span> <span class="t-badge-num orange">1</span>
+          </div>
+          <div class="t-card">
+            <div class="t-icon">📺</div>
+            <div class="t-info">
+              <div class="t-name" data-i18n="p0n">Televisore 55"</div>
+              <div class="t-cat" data-i18n="p0c">Elettronica</div>
+              <div class="t-date orange" data-i18n="p0e">Scade il 15/03/2025</div>
+            </div>
+            <div class="t-days orange">
+              <div class="t-days-num">14</div><div class="t-days-lbl" data-i18n="days_lbl">giorni</div>
+            </div>
+          </div>
+          <div class="t-section green">
+            <span style="font-size:14px">✓</span> <span data-i18n="sec_att">ATTIVE</span> <span class="t-badge-num green">6</span>
+          </div>
+          <div class="t-card">
+            <div class="t-icon">🫧</div>
+            <div class="t-info">
+              <div class="t-name" data-i18n="p1n">Lavatrice 8kg</div>
+              <div class="t-cat" data-i18n="p1c">Elettrodomestici</div>
+              <div class="t-date grey" data-i18n="p1e">Scade il 10/07/2026</div>
+            </div>
+            <div class="t-days green">
+              <div class="t-days-num">598</div><div class="t-days-lbl" data-i18n="days_lbl2">giorni</div>
+            </div>
+          </div>
+          <div class="t-card">
+            <div class="t-icon">📱</div>
+            <div class="t-info">
+              <div class="t-name" data-i18n="p2n">Smartphone</div>
+              <div class="t-cat" data-i18n="p2c">Telefonia</div>
+              <div class="t-date grey" data-i18n="p2e">Scade il 20/09/2025</div>
+            </div>
+            <div class="t-days green">
+              <div class="t-days-num">240</div><div class="t-days-lbl" data-i18n="days_lbl3">giorni</div>
+            </div>
+          </div>
+          <div class="t-bottom-bar">
+            <div class="t-tab active"><div class="t-tab-icon">🏠</div><span data-i18n="tab_home">Home</span></div>
+            <div class="t-tab"><div class="t-tab-icon">📊</div><span data-i18n="tab_stats">Statistiche</span></div>
+            <div class="t-tab"><div class="t-tab-icon">⚙️</div><span data-i18n="tab_settings">Impostazioni</span></div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+<script>
+const T = {
+  it: {
+    nav_home:'Home', nav_demo:'Demo', nav_premium:'Premium', nav_info:'Info', nav_privacy:'Privacy', nav_contact:'Contatti',
+    badge_ios:'🍎 iOS — Prossimamente',
+    slogan:'Non perdere mai più una <span data-i18n="slogan_span">garanzia</span>',
+    slogan_span:'garanzia',
+    descrizione:'Warranto raccoglie tutte le garanzie dei tuoi prodotti in un unico posto. Ricevi notifiche prima della scadenza, archivia gli scontrini e non perdere mai più un reclamo.',
+    btn_download:'▶ Scarica gratis',
+    btn_more:'Scopri di più ↓',
+    hint_phone:'👆 Tocca lo smartphone per provare l\'app',
+    stat_att:'Attive', stat_exp:'Scad.', stat_sca:'Scadute',
+    sec_exp:'IN SCADENZA', sec_att:'ATTIVE',
+    p0n:'Televisore 55"', p0c:'Elettronica', p0e:'Scade il 15/03/2025',
+    p1n:'Lavatrice 8kg', p1c:'Elettrodomestici', p1e:'Scade il 10/07/2026',
+    p2n:'Smartphone', p2c:'Telefonia', p2e:'Scade il 20/09/2025',
+    days_lbl:'giorni', days_lbl2:'giorni', days_lbl3:'giorni',
+    tab_home:'Home', tab_stats:'Statistiche', tab_settings:'Impostazioni',
+  },
+  en: {
+    nav_home:'Home', nav_demo:'Demo', nav_premium:'Premium', nav_info:'Info', nav_privacy:'Privacy', nav_contact:'Contact',
+    badge_ios:'🍎 iOS — Coming Soon',
+    slogan:'Never lose a <span style="color:#81D4FA;font-style:italic">warranty</span> again',
+    slogan_span:'warranty',
+    descrizione:'Warranto keeps all your product warranties in one place. Get notified before they expire, archive receipts, and never miss a claim again.',
+    btn_download:'▶ Download free',
+    btn_more:'Discover more ↓',
+    hint_phone:'👆 Tap the phone to try the app',
+    stat_att:'Active', stat_exp:'Expiring', stat_sca:'Expired',
+    sec_exp:'EXPIRING', sec_att:'ACTIVE',
+    p0n:'55" TV set', p0c:'Electronics', p0e:'Expires 15/03/2025',
+    p1n:'Washing machine 8kg', p1c:'Appliances', p1e:'Expires 10/07/2026',
+    p2n:'Smartphone', p2c:'Mobile', p2e:'Expires 20/09/2025',
+    days_lbl:'days', days_lbl2:'days', days_lbl3:'days',
+    tab_home:'Home', tab_stats:'Statistics', tab_settings:'Settings',
+  },
+  fr: {
+    nav_home:'Accueil', nav_demo:'Démo', nav_premium:'Premium', nav_info:'Info', nav_privacy:'Confidentialité', nav_contact:'Contact',
+    badge_ios:'🍎 iOS — Bientôt',
+    slogan:'Ne perdez plus jamais une <span style="color:#81D4FA;font-style:italic">garantie</span>',
+    slogan_span:'garantie',
+    descrizione:'Warranto regroupe toutes vos garanties en un seul endroit. Recevez des notifications avant expiration, archivez vos reçus et ne manquez plus jamais rien.',
+    btn_download:'▶ Télécharger gratuitement',
+    btn_more:'En savoir plus ↓',
+    hint_phone:'👆 Touchez le téléphone pour essayer l\'app',
+    stat_att:'Actives', stat_exp:'Expirant', stat_sca:'Expirées',
+    sec_exp:'EXPIRANT', sec_att:'ACTIVES',
+    p0n:'Téléviseur 55"', p0c:'Électronique', p0e:'Expire le 15/03/2025',
+    p1n:'Lave-linge 8kg', p1c:'Électroménager', p1e:'Expire le 10/07/2026',
+    p2n:'Smartphone', p2c:'Mobile', p2e:'Expire le 20/09/2025',
+    days_lbl:'jours', days_lbl2:'jours', days_lbl3:'jours',
+    tab_home:'Accueil', tab_stats:'Statistiques', tab_settings:'Paramètres',
+  },
+  es: {
+    nav_home:'Inicio', nav_demo:'Demo', nav_premium:'Premium', nav_info:'Info', nav_privacy:'Privacidad', nav_contact:'Contacto',
+    badge_ios:'🍎 iOS — Próximamente',
+    slogan:'Nunca pierdas una <span style="color:#81D4FA;font-style:italic">garantía</span> más',
+    slogan_span:'garantía',
+    descrizione:'Warranto reúne todas las garantías de tus productos en un solo lugar. Recibe notificaciones antes de que venzan y nunca pierdas un reclamo.',
+    btn_download:'▶ Descargar gratis',
+    btn_more:'Descubrir más ↓',
+    hint_phone:'👆 Toca el teléfono para probar la app',
+    stat_att:'Activas', stat_exp:'Por vencer', stat_sca:'Vencidas',
+    sec_exp:'POR VENCER', sec_att:'ACTIVAS',
+    p0n:'Televisor 55"', p0c:'Electrónica', p0e:'Vence el 15/03/2025',
+    p1n:'Lavadora 8kg', p1c:'Electrodomésticos', p1e:'Vence el 10/07/2026',
+    p2n:'Smartphone', p2c:'Telefonía', p2e:'Vence el 20/09/2025',
+    days_lbl:'días', days_lbl2:'días', days_lbl3:'días',
+    tab_home:'Inicio', tab_stats:'Estadísticas', tab_settings:'Ajustes',
+  },
+  de: {
+    nav_home:'Startseite', nav_demo:'Demo', nav_premium:'Premium', nav_info:'Info', nav_privacy:'Datenschutz', nav_contact:'Kontakt',
+    badge_ios:'🍎 iOS — Demnächst',
+    slogan:'Verlieren Sie nie wieder eine <span style="color:#81D4FA;font-style:italic">Garantie</span>',
+    slogan_span:'Garantie',
+    descrizione:'Warranto hält alle Ihre Produktgarantien an einem Ort. Erhalten Sie Benachrichtigungen vor dem Ablauf, archivieren Sie Belege und verpassen Sie nie wieder eine Reklamation.',
+    btn_download:'▶ Kostenlos herunterladen',
+    btn_more:'Mehr entdecken ↓',
+    hint_phone:'👆 Tippen Sie auf das Telefon, um die App zu testen',
+    stat_att:'Aktiv', stat_exp:'Ablaufend', stat_sca:'Abgelaufen',
+    sec_exp:'ABLAUFEND', sec_att:'AKTIV',
+    p0n:'Fernseher 55"', p0c:'Elektronik', p0e:'Läuft ab 15.03.2025',
+    p1n:'Waschmaschine 8kg', p1c:'Haushaltsgeräte', p1e:'Läuft ab 10.07.2026',
+    p2n:'Smartphone', p2c:'Mobilfunk', p2e:'Läuft ab 20.09.2025',
+    days_lbl:'Tage', days_lbl2:'Tage', days_lbl3:'Tage',
+    tab_home:'Start', tab_stats:'Statistiken', tab_settings:'Einstellungen',
+  },
+  pt: {
+    nav_home:'Início', nav_demo:'Demo', nav_premium:'Premium', nav_info:'Info', nav_privacy:'Privacidade', nav_contact:'Contacto',
+    badge_ios:'🍎 iOS — Em breve',
+    slogan:'Nunca perca uma <span style="color:#81D4FA;font-style:italic">garantia</span> novamente',
+    slogan_span:'garantia',
+    descrizione:'Warranto mantém todas as garantias dos seus produtos num só lugar. Receba notificações antes de expirarem e nunca perca uma reclamação.',
+    btn_download:'▶ Descarregar grátis',
+    btn_more:'Descobrir mais ↓',
+    hint_phone:'👆 Toque no telemóvel para experimentar a app',
+    stat_att:'Ativas', stat_exp:'Expirando', stat_sca:'Expiradas',
+    sec_exp:'EXPIRANDO', sec_att:'ATIVAS',
+    p0n:'Televisor 55"', p0c:'Electrónica', p0e:'Expira 15/03/2025',
+    p1n:'Máquina de lavar 8kg', p1c:'Electrodomésticos', p1e:'Expira 10/07/2026',
+    p2n:'Smartphone', p2c:'Telemóvel', p2e:'Expira 20/09/2025',
+    days_lbl:'dias', days_lbl2:'dias', days_lbl3:'dias',
+    tab_home:'Início', tab_stats:'Estatísticas', tab_settings:'Definições',
+  },
+};
+
+const sysL = (navigator.language || 'it').toLowerCase().slice(0,2);
+let currentLang;
+try { currentLang = localStorage.getItem('warranto_lang') || (T[sysL] ? sysL : 'it'); } catch(e) { currentLang = T[sysL] ? sysL : 'it'; }
+if (!T[currentLang]) currentLang = 'it';
+
+function setLang(l) {
+  currentLang = l;
+  try { localStorage.setItem('warranto_lang', l); } catch(e) {}
+  document.querySelectorAll('.lang-flag').forEach(f => {
+    f.classList.toggle('active', f.getAttribute('data-lang') === l);
+  });
+  const t = T[l];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (t[k] !== undefined) el.innerHTML = t[k];
+  });
+}
+
+setLang(currentLang);
+</script>
+</body>
+</html>

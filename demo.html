@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warranto — Demo interattiva</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-deep:#0D47A1; --blue-mid:#1565C0; --blue-bright:#1E88E5;
+      --blue-light:#BBDEFB; --off-white:#F7F9FC; --text:#1A1F2E;
+      --text-muted:#5A6072; --accent:#00B0FF; --radius:16px;
+      --app-primary:#4355B9; --app-on-primary:#fff;
+      --app-primary-container:#DEE0FF; --app-on-primary-container:#00006E;
+      --app-surface:#FEF7FF; --app-surface-variant:#E3E1EC;
+      --app-on-surface:#1C1B1F; --app-on-surface-variant:#46464F;
+      --app-outline:#767680; --app-outline-variant:#CAC4D0;
+      --app-green:#2E7D32; --app-green-l:#E8F5E9; --app-green-c:#388E3C;
+      --app-orange:#E65100; --app-orange-l:#FFF3E0;
+      --app-red:#C62828; --app-red-l:#FFEBEE;
+      --app-teal-l:#E0F2F1;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #0D47A1 0%, #1E88E5 60%, #29B6F6 100%);
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::after {
+      content: '';
+      position: absolute;
+      bottom: -5px; left: 0; right: 0;
+      height: 120px;
+      background: #F7F9FC;
+      clip-path: ellipse(60% 100% at 50% 100%);
+      z-index: 1;
+    }
+
+    /* ══ LANGUAGE SWITCHER — top left ══ */
+    .lang-switcher {
+      position: fixed;
+      top: 22px; left: 48px;
+      z-index: 600;
+      display: flex; gap: 6px; align-items: center;
+    }
+    .lang-flag {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      cursor: pointer; font-size: 1.15rem;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.12);
+      transition: all 0.18s; text-decoration: none; line-height: 1;
+    }
+    .lang-flag:hover { border-color: white; background: rgba(255,255,255,0.25); }
+    .lang-flag.active { border-color: white; background: rgba(255,255,255,0.35); box-shadow: 0 0 0 2px rgba(255,255,255,0.5); }
+
+    /* ══ NAV — top right ══ */
+    nav {
+      position: fixed; top: 0; right: 0;
+      z-index: 500; padding: 20px 48px; background: transparent;
+    }
+    .nav-links { display: flex; gap: 22px; list-style: none; align-items: center; }
+    .nav-links a {
+      text-decoration: none; font-size: .87rem; font-weight: 500;
+      color: white; opacity: .82; text-shadow: 0 1px 8px rgba(0,0,0,.6);
+      transition: opacity .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { opacity: 1; font-weight: 700; }
+
+    /* ══ HERO LAYOUT ══ */
+    .hero-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 90px 60px 180px 60px;
+      position: relative;
+      z-index: 10;
+      gap: 40px;
+    }
+
+    /* ══ LEFT: testo demo ══ */
+    .hero-left {
+      flex: 1;
+      padding-right: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .demo-eyebrow {
+      font-size: .75rem; font-weight: 600; letter-spacing: 2px;
+      color: rgba(255,255,255,.7); text-transform: uppercase; margin-bottom: 14px;
+    }
+    .demo-main-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+      color: white; line-height: 1.2; margin-bottom: 18px;
+    }
+    .demo-main-title em { font-style: italic; color: var(--accent); }
+    .demo-main-sub {
+      font-size: 1.15rem; line-height: 1.65; opacity: 0.88;
+      margin-bottom: 36px; max-width: 520px; font-weight: 300;
+    }
+    .demo-disclaimer {
+      color: rgba(255,255,255,.52); font-size: .78rem; line-height: 1.6;
+      margin-bottom: 32px; max-width: 480px;
+      display: flex; align-items: flex-start; gap: 6px;
+    }
+    .demo-disclaimer::before { content: 'ℹ️'; flex-shrink: 0; font-size: .82rem; margin-top: 1px; }
+    .btn-download-demo {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: white; color: var(--blue-mid);
+      padding: 14px 30px; border-radius: 100px; font-weight: 700;
+      font-size: .95rem; text-decoration: none;
+      box-shadow: 0 8px 32px rgba(0,0,0,.2);
+      transition: transform .2s, box-shadow .2s; margin-bottom: 36px;
+    }
+    .btn-download-demo:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,.3); }
+
+    /* ══ Screen selector dots + description cards ══ */
+    .screen-nav {
+      display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .sn-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,.28); cursor: pointer;
+      transition: all .25s; flex-shrink: 0; border: none;
+    }
+    .sn-dot.active { width: 24px; border-radius: 4px; background: white; }
+
+    /* description cards */
+    .cc-panel { }
+    .cc-card { display: none; animation: ccIn .28s ease; }
+    .cc-card.active { display: block; }
+    @keyframes ccIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .cc-tag {
+      display: inline-block; padding: 3px 14px; border-radius: 100px;
+      background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35);
+      color: white; font-size: .7rem; font-weight: 600; letter-spacing: .6px;
+      text-transform: uppercase; margin-bottom: 12px; backdrop-filter: blur(8px);
+    }
+    .cc-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+      color: white; line-height: 1.25; margin-bottom: 10px;
+    }
+    .cc-lead {
+      color: rgba(255,255,255,.78); font-size: .88rem; line-height: 1.7;
+      margin-bottom: 16px; font-weight: 300;
+    }
+    .cc-feats { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .cc-feat {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+      border-radius: 10px; padding: 10px 12px; backdrop-filter: blur(4px);
+    }
+    .cc-feat-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .cc-feat-text { font-size: .78rem; color: rgba(255,255,255,.85); line-height: 1.55; }
+    .cc-feat-text strong { color: white; font-weight: 600; }
+    .cc-discl {
+      background: rgba(0,0,0,.15); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 9px; padding: 9px 12px; font-size: .68rem;
+      color: rgba(255,255,255,.45); line-height: 1.6;
+    }
+
+    /* ══ RIGHT: phone ══ */
+    .hero-right {
+      flex: 0 0 340px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .hint-telefono {
+      font-size: 14px; margin-bottom: 12px; opacity: 0.88; text-align: center;
+    }
+    /* Phone mockup — same style as index */
+    .phone-outer { position: relative; width: 300px; height: 635px; }
+    .phone-shell {
+      position: absolute; top: 16px; left: 8px;
+      width: 284px; height: 603px; border-radius: 30px; overflow: hidden;
+      background: var(--app-surface); z-index: 1;
+    }
+    .phone-frame {
+      position: absolute; inset: 0; border-radius: 40px;
+      box-shadow: 0 0 0 8px #1a1c2e, 0 0 0 10px #252843, 0 0 0 11px rgba(255,255,255,.05), 0 32px 70px rgba(0,0,0,.75);
+      pointer-events: none; z-index: 50;
+      animation: galleggia 4s ease-in-out infinite;
+    }
+    .phone-notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 82px; height: 20px; background: #1a1c2e;
+      border-radius: 0 0 13px 13px; z-index: 60; pointer-events: none;
+      animation: galleggia 4s ease-in-out infinite;
+    }
+    .phone-btn { position: absolute; width: 3px; border-radius: 2px; background: #252843; z-index: 60; }
+    @keyframes galleggia { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+    .phone-btn-anim {
+      animation: galleggiabtn 4s ease-in-out infinite;
+    }
+    @keyframes galleggiabtn { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+
+    /* App screen internals */
+    .app-screen { font-family: 'Roboto', Arial, sans-serif; }
+    .sb {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 14px 3px; font-size: .6rem; font-weight: 700;
+      background: var(--app-primary); color: white; flex-shrink: 0;
+    }
+    .sb.surface { background: var(--app-surface); color: var(--app-on-surface); }
+    .sb-icons { display: flex; gap: 3px; align-items: center; font-size: .55rem; }
+    .screen { display: none; flex-direction: column; height: calc(100% - 22px); }
+    .screen.active { display: flex; animation: fadeIn .15s; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .appbar {
+      display: flex; align-items: center; gap: 4px; padding: 0 4px;
+      height: 44px; flex-shrink: 0; background: var(--app-primary); color: white;
+    }
+    .appbar.surface { background: var(--app-surface); color: var(--app-on-surface); border-bottom: 1px solid var(--app-outline-variant); }
+    .ab-title { flex: 1; font-size: .9rem; font-weight: 500; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ab-title.bold { font-weight: 700; font-size: 1rem; }
+    .ib { width: 34px; height: 34px; border: none; border-radius: 100px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .85rem; color: white; flex-shrink: 0; }
+    .ib:hover { background: rgba(255,255,255,.15); }
+    .ib.dark { color: var(--app-on-surface); }
+    .ib.dark:hover { background: rgba(0,0,0,.06); }
+    .body { flex: 1; overflow-y: auto; background: var(--app-surface); min-height: 0; }
+    .body::-webkit-scrollbar { display: none; }
+    .bnav { display: flex; background: var(--app-surface); border-top: 1px solid var(--app-outline-variant); padding: 4px 0 10px; flex-shrink: 0; }
+    .bni { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 2px 0; cursor: pointer; border: none; background: none; font-size: .52rem; font-weight: 500; color: var(--app-on-surface-variant); letter-spacing: .2px; font-family: 'Roboto', sans-serif; }
+    .bni.active { color: var(--app-primary); }
+    .bni-icon { font-size: .95rem; width: 42px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 100px; }
+    .bni.active .bni-icon { background: var(--app-primary-container); }
+    .fab-plus { position: absolute; bottom: 52px; right: 10px; z-index: 30; width: 50px; height: 50px; border-radius: 14px; background: var(--app-primary); border: none; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: white; cursor: pointer; box-shadow: 0 3px 12px rgba(67,85,185,.45); }
+    .fab-edit { position: absolute; bottom: 52px; right: 10px; z-index: 30; height: 38px; padding: 0 14px; background: var(--app-green-c); border-radius: 11px; border: none; display: flex; align-items: center; gap: 6px; color: white; font-size: .76rem; font-weight: 500; font-family: 'Roboto', sans-serif; cursor: pointer; box-shadow: 0 3px 12px rgba(46,125,50,.4); }
+    /* home */
+    .pills-row { display: flex; gap: 8px; }
+    .pill { flex: 1; background: rgba(255,255,255,.18); border-radius: 10px; padding: 8px 5px; text-align: center; }
+    .pill-n { font-size: 1.1rem; font-weight: bold; color: white; line-height: 1; }
+    .pill-l { font-size: .52rem; text-transform: uppercase; font-weight: bold; opacity: .8; color: white; margin-top: 2px; }
+    .sec-hdr { display: flex; align-items: center; gap: 6px; padding: 10px 14px 4px; }
+    .sec-ico { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .65rem; flex-shrink: 0; }
+    .sec-lbl { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; flex: 1; }
+    .sec-badge { color: white; padding: 2px 7px; border-radius: 10px; font-size: .58rem; font-weight: 700; }
+    .wcard { background: white; margin: 4px 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.06); cursor: pointer; }
+    .wcard-row { display: flex; align-items: center; gap: 8px; padding: 10px 10px; }
+    .wc-ico { width: 38px; height: 38px; background: var(--app-primary-container); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .wc-body { flex: 1; min-width: 0; }
+    .wc-name { font-size: .76rem; font-weight: 600; color: var(--app-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wc-cat { font-size: .6rem; color: var(--app-on-surface-variant); margin-top: 1px; }
+    .wc-date { font-size: .6rem; font-weight: 600; margin-top: 3px; }
+    .dbadge { border-radius: 8px; padding: 4px 6px; text-align: center; min-width: 40px; border: 1px solid transparent; flex-shrink: 0; }
+    .dbadge-n { font-size: .9rem; font-weight: bold; line-height: 1; }
+    .dbadge-s { font-size: .5rem; font-weight: bold; }
+    .wc-price { font-size: .6rem; color: var(--app-on-surface-variant); margin-top: 3px; font-weight: 500; }
+    /* stats */
+    .stats-total { font-size: 1.8rem; font-weight: 700; color: white; margin: 4px 0 2px; }
+    .stats-sub { font-size: .65rem; color: rgba(255,255,255,.6); margin-bottom: 8px; }
+    .mini-row { display: flex; gap: 6px; }
+    .mini { flex: 1; background: rgba(255,255,255,.15); border-radius: 8px; padding: 6px 4px; text-align: center; }
+    .mini-n { font-size: .9rem; font-weight: 700; color: white; }
+    .mini-l { font-size: .5rem; text-transform: uppercase; font-weight: 600; opacity: .75; color: white; }
+    .chart-card { background: white; margin: 8px 10px 0; border-radius: 10px; padding: 10px; }
+    .chart-ttl { font-size: .7rem; font-weight: 700; color: var(--app-on-surface); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .4px; }
+    .bi { margin-bottom: 6px; }
+    .bi-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+    .bi-l { font-size: .62rem; font-weight: 500; color: var(--app-on-surface-variant); }
+    .bi-a { font-size: .62rem; font-weight: 600; color: var(--app-on-surface); }
+    .bi-bg { height: 5px; background: var(--app-surface-variant); border-radius: 3px; overflow: hidden; }
+    .bi-fill { height: 100%; background: var(--app-primary); border-radius: 3px; }
+    /* detail */
+    .det-hdr { background: var(--app-primary); padding: 8px 10px 14px; flex-shrink: 0; }
+    .det-hdr.exp { background: var(--app-orange); }
+    .det-hdr.sca { background: var(--app-red); }
+    .det-back { background: transparent; border: none; color: rgba(255,255,255,.85); font-size: .7rem; cursor: pointer; padding: 2px 4px; font-family: 'Roboto', sans-serif; }
+    .det-ico-box { width: 52px; height: 52px; background: rgba(255,255,255,.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 6px auto 8px; }
+    .det-name { font-size: .95rem; font-weight: 700; color: white; text-align: center; margin-bottom: 3px; }
+    .det-sub { font-size: .65rem; color: rgba(255,255,255,.75); text-align: center; }
+    .stato-strip { padding: 8px 14px; font-size: .72rem; font-weight: 600; flex-shrink: 0; }
+    .det-sec { background: white; margin: 6px 10px 0; border-radius: 10px; overflow: hidden; }
+    .det-sec-hdr { display: flex; align-items: center; gap: 7px; padding: 8px 12px; background: var(--app-surface-variant); font-size: .65rem; }
+    .dsico { font-size: .85rem; }
+    .dstitl { flex: 1; font-weight: 700; color: var(--app-on-surface); text-transform: uppercase; letter-spacing: .4px; font-size: .6rem; }
+    .dschev { color: var(--app-on-surface-variant); font-size: .7rem; }
+    .ir { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-bottom: 1px solid var(--app-outline-variant); }
+    .ir:last-child { border-bottom: none; }
+    .ir-i { font-size: .75rem; flex-shrink: 0; }
+    .ir-l { font-size: .62rem; color: var(--app-on-surface-variant); flex: 1; }
+    .ir-v { font-size: .7rem; font-weight: 600; color: var(--app-on-surface); }
+    .ir-v.hi { font-weight: 700; }
+    /* settings */
+    .set-wrap { padding: 8px 10px; }
+    .set-sec { font-size: .58rem; font-weight: 700; color: var(--app-on-surface-variant); text-transform: uppercase; letter-spacing: .7px; padding: 14px 2px 4px; }
+    .prem-card { background: linear-gradient(135deg, var(--app-primary), #6B7FD4); border-radius: 14px; padding: 12px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 3px 12px rgba(67,85,185,.3); }
+    .prem-t { font-size: .8rem; font-weight: 600; color: white; }
+    .prem-s { font-size: .62rem; color: rgba(255,255,255,.8); margin-top: 1px; }
+    .set-tile { background: white; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04); overflow: hidden; }
+    .tile-row { display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-bottom: 1px solid var(--app-outline-variant); cursor: pointer; }
+    .tile-row:last-child { border-bottom: none; }
+    .tile-ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; }
+    .tile-txts { flex: 1; }
+    .tile-t { font-size: .76rem; font-weight: 500; color: var(--app-on-surface); }
+    .tile-s { font-size: .6rem; color: var(--app-on-surface-variant); margin-top: 1px; }
+    .toggle { width: 34px; height: 18px; border-radius: 9px; background: var(--app-outline-variant); position: relative; cursor: pointer; transition: background .2s; flex-shrink: 0; margin-left: auto; }
+    .toggle.on { background: var(--app-primary); }
+    .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: white; transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+    .toggle.on::after { left: 18px; }
+    .tile-arr { color: var(--app-on-surface-variant); font-size: .7rem; margin-left: auto; }
+    .tile-pro { background: var(--app-red-l); color: var(--app-red); font-size: .56rem; font-weight: 700; padding: 2px 6px; border-radius: 20px; margin-left: auto; }
+    /* add */
+    .add-wrap { padding: 12px; }
+    .f-lbl { font-size: .58rem; font-weight: 600; color: var(--app-on-surface-variant); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; font-family: 'Roboto', sans-serif; }
+    .f-in { width: 100%; padding: 9px 10px; background: white; border: 1px solid var(--app-outline-variant); border-radius: 7px; font-family: 'Roboto', sans-serif; font-size: .78rem; color: var(--app-on-surface); outline: none; transition: border-color .15s; margin-bottom: 10px; }
+    .f-in:focus { border-color: var(--app-primary); border-width: 2px; }
+    .f-row { display: flex; gap: 6px; }
+    .f-row .fg { flex: 1; }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .chip { padding: 4px 10px; border-radius: 8px; background: var(--app-surface-variant); border: 1px solid var(--app-outline-variant); font-size: .64rem; font-weight: 500; cursor: pointer; color: var(--app-on-surface-variant); font-family: 'Roboto', sans-serif; transition: all .15s; }
+    .chip.sel { background: var(--app-primary-container); border-color: var(--app-primary); color: var(--app-on-primary-container); font-weight: 600; }
+    .add-sec { font-size: .58rem; font-weight: 600; color: var(--app-on-surface-variant); text-transform: uppercase; letter-spacing: .5px; margin: 12px 0 7px; padding-top: 12px; border-top: 1px solid var(--app-outline-variant); display: flex; align-items: center; gap: 5px; font-family: 'Roboto', sans-serif; }
+    .out-btn { width: 100%; padding: 9px; border: 1px solid var(--app-outline); border-radius: 8px; background: transparent; font-family: 'Roboto', sans-serif; font-size: .74rem; font-weight: 500; color: var(--app-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 7px; }
+    .out-btn.dash { border-style: dashed; }
+    .save-btn { width: 100%; padding: 11px; margin-top: 4px; background: var(--app-primary); border: none; border-radius: 100px; color: white; font-family: 'Roboto', sans-serif; font-size: .84rem; font-weight: 500; cursor: pointer; }
+
+    /* ══ FOOTER ══ */
+    footer {
+      position: relative; z-index: 2;
+      background: var(--text); border-top: 1px solid rgba(255,255,255,.06);
+      padding: 48px; text-align: center;
+    }
+    .foot-logo-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px; }
+    .foot-logo-img { width: 34px; height: 34px; object-fit: contain; border-radius: 8px; }
+    .foot-logo-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: white; }
+    .footer-sub { color: rgba(255,255,255,.4); font-size: .85rem; margin-bottom: 20px; }
+    .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { color: rgba(255,255,255,.5); font-size: .85rem; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: white; }
+
+    @media(max-width:900px){
+      .hero-container { flex-direction: column; padding: 120px 30px 160px; align-items: center; }
+      .hero-left { padding-right: 0; margin-bottom: 40px; max-width: 100%; }
+      .lang-switcher { left: 18px; top: 14px; }
+      .lang-flag { width: 26px; height: 26px; font-size: 1rem; }
+      nav { padding: 14px 18px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: .74rem; }
+      footer { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LANGUAGE SWITCHER — top left -->
+  <div class="lang-switcher">
+    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
+    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
+    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
+    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
+    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
+    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+  </div>
+
+  <!-- NAV — top right -->
+  <nav>
+    <ul class="nav-links">
+      <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+      <li><a href="demo.html" class="active" data-i18n="nav_demo">Demo</a></li>
+      <li><a href="premium.html" data-i18n="nav_premium">Premium</a></li>
+      <li><a href="info.html" data-i18n="nav_info">Info</a></li>
+      <li><a href="privacy.html" data-i18n="nav_privacy">Privacy</a></li>
+      <li><a href="contatti.html" data-i18n="nav_contact">Contatti</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero-container">
+
+    <!-- LEFT: testo -->
+    <div class="hero-left">
+      <p class="demo-eyebrow" id="eyebrow">Demo interattiva</p>
+      <h1 class="demo-main-title" id="demo-title">Esplora <em>Warranto</em> prima di scaricarlo</h1>
+      <p class="demo-main-sub" id="demo-sub">Naviga tra le schermate dell'app per scoprire come funziona e valutare se fa al caso tuo. Tocca le card, cambia sezione, prova l'interfaccia.</p>
+
+      <!-- dots nav + pulsante affiancati -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; width:100%;">
+        <div class="screen-nav" id="sdots">
+          <button class="sn-dot active" id="sd-home" onclick="goScreen('home')"></button>
+          <button class="sn-dot" id="sd-detail" onclick="goScreen('detail');openDetail(0)"></button>
+          <button class="sn-dot" id="sd-stats" onclick="goScreen('stats')"></button>
+          <button class="sn-dot" id="sd-settings" onclick="goScreen('settings')"></button>
+          <button class="sn-dot" id="sd-add" onclick="goScreen('add')"></button>
+        </div>
+        <a href="https://play.google.com/store/apps/details?id=com.warranto.app" class="btn-download-demo" id="btn-dl" style="margin-bottom:0; flex-shrink:0;">
+          ▶ Scarica gratis su Google Play
+        </a>
+      </div>
+
+      <!-- description cards -->
+      <div class="cc-panel">
+        <div class="cc-card active" id="cc-home">
+          <span class="cc-tag" id="cct-home">Home</span>
+          <div class="cc-title" id="cct-home-t">Tutte le tue garanzie,<br>sempre a portata di mano.</div>
+          <div class="cc-lead" id="cct-home-l"></div>
+          <div class="cc-feats" id="cct-home-f"></div>
+          <div class="cc-discl"><span id="cct-home-d"></span></div>
+        </div>
+        <div class="cc-card" id="cc-detail">
+          <span class="cc-tag" id="cct-det">Dettaglio</span>
+          <div class="cc-title" id="cct-det-t">Ogni garanzia, nel dettaglio.</div>
+          <div class="cc-lead" id="cct-det-l"></div>
+          <div class="cc-feats" id="cct-det-f"></div>
+          <div class="cc-discl"><span id="cct-det-d"></span></div>
+        </div>
+        <div class="cc-card" id="cc-stats">
+          <span class="cc-tag" id="cct-stats">Statistiche</span>
+          <div class="cc-title" id="cct-stats-t">Quanto hai speso e quando scade.</div>
+          <div class="cc-lead" id="cct-stats-l"></div>
+          <div class="cc-feats" id="cct-stats-f"></div>
+          <div class="cc-discl"><span id="cct-stats-d"></span></div>
+        </div>
+        <div class="cc-card" id="cc-settings">
+          <span class="cc-tag" id="cct-set">Impostazioni</span>
+          <div class="cc-title" id="cct-set-t">Personalizza le notifiche e proteggi i tuoi dati.</div>
+          <div class="cc-lead" id="cct-set-l"></div>
+          <div class="cc-feats" id="cct-set-f"></div>
+          <div class="cc-discl"><span id="cct-set-d"></span></div>
+        </div>
+        <div class="cc-card" id="cc-add">
+          <span class="cc-tag" id="cct-add">Aggiungi</span>
+          <div class="cc-title" id="cct-add-t">Aggiungere una garanzia è velocissimo.</div>
+          <div class="cc-lead" id="cct-add-l"></div>
+          <div class="cc-feats" id="cct-add-f"></div>
+          <div class="cc-discl"><span id="cct-add-d"></span></div>
+        </div>
+      </div>
+
+      <p class="demo-disclaimer" id="demo-discl" style="margin-top:20px">Il layout visualizzato potrebbe differire leggermente dalla versione installata sul tuo dispositivo, poiché l'interfaccia viene continuamente migliorata.</p>
+    </div>
+
+    <!-- RIGHT: phone -->
+    <div class="hero-right">
+      <div class="hint-telefono" id="hint-phone">👆 Tocca lo smartphone per navigare</div>
+      <div class="phone-outer">
+        <div class="phone-shell app-screen" id="phoneShell">
+          <div class="sb" id="sb">
+            <span id="clock">9:41</span>
+            <div class="sb-icons"><span>●●●</span><span style="font-size:.5rem">WiFi</span><span>🔋</span></div>
+          </div>
+
+          <!-- HOME -->
+          <div class="screen active" id="sc-home">
+            <div class="appbar">
+              <div class="ab-title bold" data-t="appName">Warranto</div>
+            </div>
+            <div style="background:var(--app-primary);padding:0 14px 12px;flex-shrink:0">
+              <div class="pills-row">
+                <div class="pill"><div class="pill-n" style="color:#A5D6A7" data-t="cntAtt">6</div><div class="pill-l" data-t="lblAtt">Attive</div></div>
+                <div class="pill"><div class="pill-n" style="color:#FFCC80" data-t="cntExp">1</div><div class="pill-l" data-t="lblExp">In scad.</div></div>
+                <div class="pill"><div class="pill-n" style="color:#EF9A9A" data-t="cntSca">1</div><div class="pill-l" data-t="lblSca">Scadute</div></div>
+              </div>
+            </div>
+            <div class="body">
+              <div class="sec-hdr">
+                <div class="sec-ico" style="background:rgba(230,81,0,.12)"><span style="color:var(--app-orange)">⚠</span></div>
+                <span class="sec-lbl" style="color:var(--app-orange)" data-t="secExp">In scadenza</span>
+                <span class="sec-badge" style="background:var(--app-orange)">1</span>
+              </div>
+              <div class="wcard" onclick="openDetail(0)">
+                <div class="wcard-row">
+                  <div class="wc-ico">📺</div>
+                  <div class="wc-body">
+                    <div class="wc-name" data-t="p0n">Televisore 55"</div>
+                    <div class="wc-cat" data-t="p0c">Elettronica</div>
+                    <div class="wc-date" style="color:var(--app-orange)" data-t="p0e">Scade il 15/03/2025</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end">
+                    <div class="dbadge" style="background:var(--app-orange-l);border-color:rgba(230,81,0,.3);color:var(--app-orange)">
+                      <div class="dbadge-n">14</div><div class="dbadge-s" data-t="dg">giorni</div>
+                    </div>
+                    <div class="wc-price">€ 799</div>
+                  </div>
+                </div>
+              </div>
+              <div class="sec-hdr">
+                <div class="sec-ico" style="background:rgba(46,125,50,.12)"><span style="color:var(--app-green)">✓</span></div>
+                <span class="sec-lbl" style="color:var(--app-green)" data-t="secAtt">Attive</span>
+                <span class="sec-badge" style="background:var(--app-green)">6</span>
+              </div>
+              <div class="wcard" onclick="openDetail(1)">
+                <div class="wcard-row">
+                  <div class="wc-ico">🫧</div>
+                  <div class="wc-body">
+                    <div class="wc-name" data-t="p1n">Lavatrice 8kg</div>
+                    <div class="wc-cat" data-t="p1c">Elettrodomestici</div>
+                    <div class="wc-date" style="color:var(--app-on-surface-variant)" data-t="p1e">Scade il 10/07/2026</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end">
+                    <div class="dbadge" style="background:var(--app-green-l);border-color:rgba(46,125,50,.3);color:var(--app-green)">
+                      <div class="dbadge-n">598</div><div class="dbadge-s" data-t="dg2">giorni</div>
+                    </div>
+                    <div class="wc-price">€ 499</div>
+                  </div>
+                </div>
+              </div>
+              <div class="wcard" onclick="openDetail(2)">
+                <div class="wcard-row">
+                  <div class="wc-ico">📱</div>
+                  <div class="wc-body">
+                    <div class="wc-name" data-t="p2n">Smartphone</div>
+                    <div class="wc-cat" data-t="p2c">Telefonia</div>
+                    <div class="wc-date" style="color:var(--app-on-surface-variant)" data-t="p2e">Scade il 20/09/2025</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end">
+                    <div class="dbadge" style="background:var(--app-green-l);border-color:rgba(46,125,50,.3);color:var(--app-green)">
+                      <div class="dbadge-n">240</div><div class="dbadge-s" data-t="dg3">giorni</div>
+                    </div>
+                    <div class="wc-price">€ 649</div>
+                  </div>
+                </div>
+              </div>
+              <div class="wcard">
+                <div class="wcard-row">
+                  <div class="wc-ico">💻</div>
+                  <div class="wc-body">
+                    <div class="wc-name" data-t="p3n">Notebook 15"</div>
+                    <div class="wc-cat" data-t="p3c">Informatica</div>
+                    <div class="wc-date" style="color:var(--app-on-surface-variant)" data-t="p3e">Scade il 05/01/2026</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end">
+                    <div class="dbadge" style="background:var(--app-green-l);border-color:rgba(46,125,50,.3);color:var(--app-green)">
+                      <div class="dbadge-n">410</div><div class="dbadge-s" data-t="dg4">giorni</div>
+                    </div>
+                    <div class="wc-price">€ 980</div>
+                  </div>
+                </div>
+              </div>
+              <div class="sec-hdr">
+                <div class="sec-ico" style="background:rgba(198,40,40,.12)"><span style="color:var(--app-red)">✕</span></div>
+                <span class="sec-lbl" style="color:var(--app-red)" data-t="secSca">Scadute</span>
+                <span class="sec-badge" style="background:var(--app-red)">1</span>
+              </div>
+              <div class="wcard" style="opacity:.65">
+                <div class="wcard-row">
+                  <div class="wc-ico" style="background:var(--app-red-l)">🎮</div>
+                  <div class="wc-body">
+                    <div class="wc-name" data-t="p4n">Console videogiochi</div>
+                    <div class="wc-cat" data-t="p4c">Gaming</div>
+                    <div class="wc-date" style="color:var(--app-red)" data-t="p4e">Scaduta il 01/12/2024</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end">
+                    <div class="dbadge" style="background:var(--app-red-l);border-color:rgba(198,40,40,.3);color:var(--app-red)">
+                      <div class="dbadge-n">90</div><div class="dbadge-s" data-t="dago">fa</div>
+                    </div>
+                    <div class="wc-price">€ 460</div>
+                  </div>
+                </div>
+              </div>
+              <div style="height:70px"></div>
+            </div>
+            <button class="fab-plus" onclick="goScreen('add')">＋</button>
+            <div class="bnav">
+              <button class="bni active" onclick="goScreen('home')"><div class="bni-icon">🏠</div><span data-t="navHome">Home</span></button>
+              <button class="bni" onclick="goScreen('stats')"><div class="bni-icon">📊</div><span data-t="navStats">Statistiche</span></button>
+              <button class="bni" onclick="goScreen('settings')"><div class="bni-icon">⚙</div><span data-t="navSet">Impostazioni</span></button>
+            </div>
+          </div>
+
+          <!-- DETAIL -->
+          <div class="screen" id="sc-detail">
+            <div id="det-hero"></div>
+            <div class="body" id="det-body"></div>
+            <button class="fab-edit" id="fab-edit" onclick="goScreen('add')">✏ <span data-t="fabMod">Modifica</span></button>
+            <div class="bnav">
+              <button class="bni" onclick="goScreen('home')"><div class="bni-icon">🏠</div><span data-t="navHome">Home</span></button>
+              <button class="bni" onclick="goScreen('stats')"><div class="bni-icon">📊</div><span data-t="navStats">Statistiche</span></button>
+              <button class="bni" onclick="goScreen('settings')"><div class="bni-icon">⚙</div><span data-t="navSet">Impostazioni</span></button>
+            </div>
+          </div>
+
+          <!-- STATS -->
+          <div class="screen" id="sc-stats">
+            <div class="appbar">
+              <div class="ab-title bold" data-t="navStats">Statistiche</div>
+              <button class="ib" onclick="goScreen('home')">✕</button>
+            </div>
+            <div style="background:var(--app-primary);color:white;padding:0 14px 12px;flex-shrink:0">
+              <div style="font-size:.6rem;font-weight:500;opacity:.8;text-transform:uppercase;letter-spacing:.5px;padding-top:3px" data-t="statsLbl">Spesa totale tracciata</div>
+              <div class="stats-total">€ 3.387</div>
+              <div class="stats-sub" data-t="statsOn">su 8 prodotti</div>
+              <div class="mini-row">
+                <div class="mini"><div class="mini-n">6</div><div class="mini-l" data-t="lblAtt">Attive</div></div>
+                <div class="mini"><div class="mini-n">1</div><div class="mini-l" data-t="lblExp">Scad.</div></div>
+                <div class="mini"><div class="mini-n">1</div><div class="mini-l" data-t="lblSca">Scad.</div></div>
+                <div class="mini"><div class="mini-n">2</div><div class="mini-l" data-t="statsReso">Resi</div></div>
+              </div>
+            </div>
+            <div class="body">
+              <div class="chart-card">
+                <div class="chart-ttl" data-t="chartCat">Spesa per categoria</div>
+                <div class="bi"><div class="bi-row"><span class="bi-l" data-t="catTel">📱 Telefonia</span><span class="bi-a">€ 1.200</span></div><div class="bi-bg"><div class="bi-fill" style="width:100%"></div></div></div>
+                <div class="bi"><div class="bi-row"><span class="bi-l" data-t="catInfo">💻 Informatica</span><span class="bi-a">€ 980</span></div><div class="bi-bg"><div class="bi-fill" style="width:82%"></div></div></div>
+                <div class="bi"><div class="bi-row"><span class="bi-l" data-t="catElet">📺 Elettronica</span><span class="bi-a">€ 799</span></div><div class="bi-bg"><div class="bi-fill" style="width:67%"></div></div></div>
+                <div class="bi"><div class="bi-row"><span class="bi-l" data-t="catEl">🫧 Elettrodomestici</span><span class="bi-a">€ 499</span></div><div class="bi-bg"><div class="bi-fill" style="width:42%"></div></div></div>
+                <div class="bi"><div class="bi-row"><span class="bi-l" data-t="catGame">🎮 Gaming</span><span class="bi-a">€ 460</span></div><div class="bi-bg"><div class="bi-fill" style="width:38%"></div></div></div>
+              </div>
+              <div class="chart-card" style="margin-top:7px">
+                <div class="chart-ttl" data-t="chartNext">Prossime scadenze</div>
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--app-outline-variant)"><span style="font-size:.72rem;font-weight:500" data-t="p0n">Televisore 55"</span><span style="background:var(--app-orange-l);border:1px solid rgba(230,81,0,.3);color:var(--app-orange);padding:2px 8px;border-radius:6px;font-size:.64rem;font-weight:600">14 gg</span></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--app-outline-variant)"><span style="font-size:.72rem;font-weight:500" data-t="p2n">Smartphone</span><span style="background:var(--app-green-l);border:1px solid rgba(46,125,50,.3);color:var(--app-green);padding:2px 8px;border-radius:6px;font-size:.64rem;font-weight:600">240 gg</span></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="font-size:.72rem;font-weight:500" data-t="p3n">Notebook 15"</span><span style="background:var(--app-green-l);border:1px solid rgba(46,125,50,.3);color:var(--app-green);padding:2px 8px;border-radius:6px;font-size:.64rem;font-weight:600">410 gg</span></div>
+                </div>
+              </div>
+              <div style="height:16px"></div>
+            </div>
+            <div class="bnav">
+              <button class="bni" onclick="goScreen('home')"><div class="bni-icon">🏠</div><span data-t="navHome">Home</span></button>
+              <button class="bni active" onclick="goScreen('stats')"><div class="bni-icon">📊</div><span data-t="navStats">Statistiche</span></button>
+              <button class="bni" onclick="goScreen('settings')"><div class="bni-icon">⚙</div><span data-t="navSet">Impostazioni</span></button>
+            </div>
+          </div>
+
+          <!-- SETTINGS -->
+          <div class="screen" id="sc-settings">
+            <div class="sb surface">
+              <span id="clock2">9:41</span>
+              <div class="sb-icons"><span>●●●</span><span style="font-size:.5rem">WiFi</span><span>🔋</span></div>
+            </div>
+            <div class="appbar surface">
+              <div class="ab-title bold" style="color:var(--app-on-surface)" data-t="navSet">Impostazioni</div>
+            </div>
+            <div class="body">
+              <div class="set-wrap">
+                <div class="set-sec" data-t="setPiano">Il tuo piano</div>
+                <div class="set-tile">
+                  <div class="tile-row">
+                    <div class="tile-ico" style="background:var(--app-primary-container)">🆓</div>
+                    <div class="tile-txts"><div class="tile-t" data-t="pianoGrat">Piano gratuito</div><div class="tile-s" data-t="pianoSub">3 prodotti · upgrade per sbloccare tutto</div></div>
+                    <span style="font-size:.65rem;font-weight:600;color:var(--app-primary);margin-left:auto" data-t="upgr">Upgrade</span>
+                  </div>
+                </div>
+                <div class="prem-card">
+                  <span style="font-size:1.35rem">⭐</span>
+                  <div><div class="prem-t" data-t="premTtl">Sblocca Warranto Premium</div><div class="prem-s" data-t="premSub">Illimitati · Backup cloud · PDF manuali</div></div>
+                  <span style="color:white;margin-left:auto">›</span>
+                </div>
+                <div class="set-sec" data-t="setShRate">Condividi &amp; Valuta</div>
+                <div class="set-tile">
+                  <div class="tile-row"><div class="tile-ico" style="background:#E8EAF6">📤</div><div class="tile-txts"><div class="tile-t" data-t="setShare">Condividi l'app</div><div class="tile-s" data-t="setSharS">+1 prodotto extra</div></div><span class="tile-arr">›</span></div>
+                  <div class="tile-row"><div class="tile-ico" style="background:#FFF9C4">⭐</div><div class="tile-txts"><div class="tile-t" data-t="setRate">Valuta l'app</div><div class="tile-s">Google Play Store</div></div><span class="tile-arr">›</span></div>
+                </div>
+                <div class="set-sec" data-t="setBack">Condivisione</div>
+                <div class="set-tile">
+                  <div class="tile-row"><div class="tile-ico" style="background:#E3F2FD">📡</div><div class="tile-txts"><div class="tile-t" data-t="setWifi">Condivisione WiFi</div><div class="tile-s" data-t="setWifiS">Trasferisci su rete locale</div></div><span class="tile-arr">›</span></div>
+                  <div class="tile-row"><div class="tile-ico" style="background:#F3E5F5">☁</div><div class="tile-txts"><div class="tile-t" data-t="setCloud">Backup cloud</div><div class="tile-s" data-t="setCloudS">Cifrato AES-256</div></div><span class="tile-pro" data-t="pro">PRO</span></div>
+                </div>
+                <div class="set-sec" data-t="setAsp">Aspetto</div>
+                <div class="set-tile">
+                  <div class="tile-row"><div class="tile-ico" style="background:#E3F2FD">🌙</div><div class="tile-txts"><div class="tile-t" data-t="setDark">Tema scuro</div><div class="tile-s" data-t="setDarkS">Segue il sistema</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+                </div>
+                <div class="set-sec" data-t="setNot">Notifiche</div>
+                <div class="set-tile">
+                  <div class="tile-row"><div class="tile-ico" style="background:var(--app-green-l)">🔔</div><div class="tile-txts"><div class="tile-t" data-t="setNotG">Notifiche scadenza</div><div class="tile-s" data-t="setNotGS">30, 14, 7 giorni prima</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                  <div class="tile-row"><div class="tile-ico" style="background:var(--app-teal-l)">↩</div><div class="tile-txts"><div class="tile-t" data-t="setNotR">Notifiche reso</div><div class="tile-s" data-t="setNotRS">Entro la finestra di reso</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                  <div class="tile-row"><div class="tile-ico" style="background:#E8EAF6">💳</div><div class="tile-txts"><div class="tile-t" data-t="setNotF">Notifiche rata</div><div class="tile-s" data-t="setNotFS">7, 3, 1 giorni prima</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                </div>
+                <div class="set-sec" data-t="setInfo2">Info</div>
+                <div class="set-tile">
+                  <div class="tile-row"><div class="tile-ico" style="background:var(--app-red-l)">🎁</div><div class="tile-txts"><div class="tile-t" data-t="setCod">Codice promo</div></div><span class="tile-arr">›</span></div>
+                  <div class="tile-row"><div class="tile-ico" style="background:var(--app-surface-variant)">ℹ</div><div class="tile-txts"><div class="tile-t" data-t="setAbout">Informazioni</div><div class="tile-s">v1.0.0 · Domixia</div></div><span class="tile-arr">›</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="bnav">
+              <button class="bni" onclick="goScreen('home')"><div class="bni-icon">🏠</div><span data-t="navHome">Home</span></button>
+              <button class="bni" onclick="goScreen('stats')"><div class="bni-icon">📊</div><span data-t="navStats">Statistiche</span></button>
+              <button class="bni active" onclick="goScreen('settings')"><div class="bni-icon">⚙</div><span data-t="navSet">Impostazioni</span></button>
+            </div>
+          </div>
+
+          <!-- ADD -->
+          <div class="screen" id="sc-add">
+            <div class="appbar">
+              <button class="ib" onclick="goScreen('home')">✕</button>
+              <div class="ab-title" style="text-align:center" data-t="addTtl">Aggiungi garanzia</div>
+              <button class="ib" style="font-size:.8rem">✔</button>
+            </div>
+            <div class="body">
+              <div class="add-wrap">
+                <div class="f-lbl" data-t="fNome">Nome prodotto *</div>
+                <input class="f-in" type="text" data-tp="fNomeH">
+                <div class="f-lbl" data-t="fCat">Categoria</div>
+                <div class="chips" id="chips">
+                  <span class="chip" onclick="selChip(this)" data-t="cEl">🫧 Elettrodomestici</span>
+                  <span class="chip sel" onclick="selChip(this)" data-t="cTel">📱 Telefonia</span>
+                  <span class="chip" onclick="selChip(this)" data-t="cInfo">💻 Informatica</span>
+                  <span class="chip" onclick="selChip(this)" data-t="cElet">📺 Elettronica</span>
+                  <span class="chip" onclick="selChip(this)" data-t="cGame">🎮 Gaming</span>
+                  <span class="chip" onclick="selChip(this)" data-t="cCasa">🏠 Casa</span>
+                </div>
+                <div class="f-lbl" data-t="fNeg">Negozio</div>
+                <input class="f-in" type="text" data-tp="fNegH">
+                <div class="f-row">
+                  <div class="fg"><div class="f-lbl" data-t="fAcq">Data acquisto</div><input class="f-in" type="text" value="12/03/2025"></div>
+                  <div class="fg"><div class="f-lbl" data-t="fSca">Scadenza</div><input class="f-in" type="text" value="12/03/2027"></div>
+                </div>
+                <div class="f-row">
+                  <div class="fg"><div class="f-lbl" data-t="fPre">Prezzo (€)</div><input class="f-in" type="text" value="649,00"></div>
+                  <div class="fg"><div class="f-lbl" data-t="fPag">Pagamento</div><input class="f-in" type="text" data-tv="fPagV"></div>
+                </div>
+                <div class="add-sec">📸 <span data-t="secSco">Scontrino</span></div>
+                <button class="out-btn dash">📷 <span data-t="btnFoto">Fotografa scontrino</span></button>
+                <button class="out-btn" style="opacity:.7;font-size:.7rem">🔍 <span data-t="btnScan">Scansiona codice a barre</span></button>
+                <div class="add-sec">📋 <span data-t="secExt">Dettagli extra</span></div>
+                <div class="f-lbl" data-t="fSer">Numero seriale</div>
+                <input class="f-in" type="text" placeholder="SN-XXXXXXXXXX">
+                <div class="f-lbl" data-t="fLink">Link manuale online</div>
+                <div style="display:flex;gap:5px;margin-bottom:9px">
+                  <input class="f-in" style="margin-bottom:0;flex:1" type="text" placeholder="https://…">
+                  <button style="width:36px;height:38px;background:var(--app-primary-container);border:1px solid var(--app-primary);border-radius:7px;cursor:pointer;font-size:.85rem;flex-shrink:0">⬛</button>
+                </div>
+                <button class="out-btn" data-t="btnPdf">📄 Carica PDF manuale 🔒</button>
+                <button class="save-btn" data-t="btnSave">Salva garanzia</button>
+                <div style="height:14px"></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /phone-shell -->
+        <div class="phone-frame"></div>
+        <div class="phone-notch"></div>
+        <div class="phone-btn phone-btn-anim" style="right:-3px;top:95px;height:48px;border-radius:0 2px 2px 0"></div>
+        <div class="phone-btn phone-btn-anim" style="right:-3px;top:158px;height:32px;border-radius:0 2px 2px 0"></div>
+        <div class="phone-btn phone-btn-anim" style="left:-3px;top:120px;height:42px;border-radius:2px 0 0 2px"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-logo-row">
+      <img src="logo.png" alt="Warranto" class="foot-logo-img">
+      <span class="foot-logo-name">Warranto</span>
+    </div>
+    <p class="footer-sub">Domixia · 2026</p>
+    <div class="footer-links">
+      <a href="index.html" data-i18n="nav_home">Home</a>
+      <a href="demo.html" data-i18n="nav_demo">Demo</a>
+      <a href="premium.html" data-i18n="nav_premium">Premium</a>
+      <a href="info.html" data-i18n="nav_info">Info</a>
+      <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
+      <a href="https://play.google.com/store/apps/details?id=com.warranto.app">Play Store</a>
+      <a href="contatti.html" data-i18n="nav_contact">Contatti</a>
+    </div>
+  </footer>
+
+<script>
+// ══ TRANSLATIONS ══
+const LANGS = {
+it:{
+  eyebrow:'Demo interattiva',
+  demoTitle:'Esplora <em>Warranto</em> prima di scaricarlo',
+  demoSub:"Naviga tra le schermate dell'app per scoprire come funziona e valutare se fa al caso tuo. Tocca le card, cambia sezione, prova l'interfaccia.",
+  demoDiscl:"Il layout visualizzato potrebbe differire leggermente dalla versione installata sul tuo dispositivo, poiché l'interfaccia viene continuamente migliorata.",
+  btnDl:'▶ Scarica gratis su Google Play',
+  hintPhone:'👆 Tocca lo smartphone per navigare',
+  appName:'Warranto',cntAtt:'6',cntExp:'1',cntSca:'1',
+  lblAtt:'Attive',lblExp:'In scad.',lblSca:'Scadute',
+  secExp:'In scadenza',secAtt:'Attive',secSca:'Scadute',
+  dg:'giorni',dg2:'giorni',dg3:'giorni',dg4:'giorni',dago:'fa',
+  p0n:'Televisore 55"',p0c:'Elettronica',p0e:'Scade il 15/03/2025',
+  p1n:'Lavatrice 8kg',p1c:'Elettrodomestici',p1e:'Scade il 10/07/2026',
+  p2n:'Smartphone',p2c:'Telefonia',p2e:'Scade il 20/09/2025',
+  p3n:'Notebook 15"',p3c:'Informatica',p3e:'Scade il 05/01/2026',
+  p4n:'Console videogiochi',p4c:'Gaming',p4e:'Scaduta il 01/12/2024',
+  navHome:'Home',navStats:'Statistiche',navSet:'Impostazioni',fabMod:'Modifica',
+  statsLbl:'Spesa totale tracciata',statsOn:'su 8 prodotti',statsReso:'Resi',
+  chartCat:'Spesa per categoria',chartNext:'Prossime scadenze',
+  catTel:'📱 Telefonia',catInfo:'💻 Informatica',catEl:'🫧 Elettrodomestici',catElet:'📺 Elettronica',catGame:'🎮 Gaming',
+  setPiano:'Il tuo piano',pianoGrat:'Piano gratuito',pianoSub:'3 prodotti · upgrade per sbloccare tutto',upgr:'Upgrade',
+  premTtl:'Sblocca Warranto Premium',premSub:'Illimitati · Backup cloud · PDF manuali',
+  setShRate:'Condividi & Valuta',setShare:"Condividi l'app",setSharS:'+1 prodotto extra',setRate:"Valuta l'app",
+  setBack:'Condivisione',setWifi:'Condivisione WiFi',setWifiS:'Trasferisci su rete locale',
+  setCloud:'Backup cloud',setCloudS:'Cifrato AES-256',pro:'PRO',
+  setAsp:'Aspetto',setDark:'Tema scuro',setDarkS:'Segue il sistema',
+  setNot:'Notifiche',setNotG:'Notifiche scadenza',setNotGS:'30, 14, 7 giorni prima',
+  setNotR:'Notifiche reso',setNotRS:'Entro la finestra di reso',
+  setNotF:'Notifiche rata',setNotFS:'7, 3, 1 giorni prima',
+  setInfo2:'Info',setCod:'Codice promo',setAbout:'Informazioni',
+  addTtl:'Aggiungi garanzia',fNome:'Nome prodotto *',fNomeH:'es. Lavatrice 8kg',
+  fCat:'Categoria',fNeg:'Negozio',fNegH:'es. Negozio bianco',
+  fAcq:'Data acquisto',fSca:'Scadenza',fPre:'Prezzo (€)',fPag:'Pagamento',fPagV:'Carta di credito',
+  secSco:'Scontrino',btnFoto:'Fotografa scontrino',btnScan:'Scansiona codice a barre',
+  secExt:'Dettagli extra',fSer:'Numero seriale',fLink:'Link manuale online',
+  btnPdf:'📄 Carica PDF manuale 🔒',btnSave:'Salva garanzia',
+  cEl:'🫧 Elettrodomestici',cTel:'📱 Telefonia',cInfo:'💻 Informatica',cElet:'📺 Elettronica',cGame:'🎮 Gaming',cCasa:'🏠 Casa',
+  detGar:'Garanzia',detPag:'Pagamento',detAss:'Assistenza',
+  cc:{
+    home:{tag:'Home',title:'Tutte le tue garanzie,\nsempre a portata di mano.',lead:"Warranto raccoglie in un unico posto tutte le garanzie dei tuoi prodotti. In scadenza, attive e scadute sono sempre ben separate e visibili a colpo d'occhio.",feats:[['🔒','<strong>I dati restano sul tuo telefono.</strong> Nessun account obbligatorio, nessun server, nessun dato condiviso.'],['⚠️','<strong>Sezioni colorate per stato.</strong> In scadenza (arancione), attive (verde) e scadute (rosso) — chiarissimo.'],['📊','<strong>Riepilogo rapido.</strong> Le pillole in cima mostrano subito quante garanzie hai attive, in scadenza o scadute.']]},
+    detail:{tag:'Dettaglio',title:'Ogni garanzia, nel dettaglio.',lead:'Tocca un prodotto per vedere tutto: data di acquisto e scadenza, prezzo, metodo di pagamento, numero seriale e contatto assistenza.',feats:[['📖','<strong>Manuale sempre con te.</strong> Salva il link al manuale online oppure carica il PDF (Premium).'],['↩️','<strong>Periodo di reso monitorato.</strong> Notifiche dedicate prima che la finestra di reso scada.'],['📄','<strong>Esporta in PDF.</strong> Genera in un tap un riepilogo completo della garanzia.']]},
+    stats:{tag:'Statistiche',title:'Quanto hai speso e quando scade.',lead:"Visualizza la spesa totale per categoria e il calendario delle prossime scadenze. Sai sempre quanto vale il parco prodotti che stai proteggendo.",feats:[['💶','<strong>Spesa per categoria.</strong> Scopri dove hai investito di più: telefonia, informatica, elettrodomestici.'],['📅','<strong>Scadenze per urgenza.</strong> Le garanzie più vicine alla scadenza sono sempre in cima.'],['↩️','<strong>Resi disponibili.</strong> Controlla i prodotti ancora rimborsabili.']]},
+    settings:{tag:'Impostazioni',title:'Personalizza le notifiche\ne proteggi i tuoi dati.',lead:'Configura quando ricevere i promemoria, scegli il tema e gestisci il backup. Con Premium sblocchi la sincronizzazione cloud cifrata e prodotti illimitati.',feats:[['🔔','<strong>Notifiche personalizzabili.</strong> Scegli quanti giorni prima vuoi essere avvisato.'],['☁️','<strong>Backup cloud AES-256 (Premium).</strong> I dati vengono cifrati sul dispositivo prima di essere caricati.'],['📡','<strong>Condivisione WiFi locale.</strong> Trasferisci garanzie su un altro dispositivo senza internet.']]},
+    add:{tag:'Aggiungi',title:'Aggiungere una garanzia\nè velocissimo.',lead:"Inserisci nome, categoria, date e prezzo. Puoi fotografare lo scontrino con OCR automatico, scansionare il QR del manuale e registrare l'eventuale finanziamento.",feats:[['🔍','<strong>OCR scontrino (Premium).</strong> Fotografa lo scontrino: l\'app riconosce automaticamente prodotto, data e importo.'],['⬛','<strong>QR code manuale.</strong> Inquadra il QR sulla confezione per salvare il link al manuale.'],['💳','<strong>Finanziamento a rate.</strong> Registra importo mensile e scadenza: riceverai notifiche prima di ogni rata.']]},
+  }
+},
+en:{
+  eyebrow:'Interactive demo',
+  demoTitle:'Explore <em>Warranto</em> before downloading',
+  demoSub:'Browse the app screens to discover how it works and decide if it suits you. Tap the cards, switch sections, try the interface.',
+  demoDiscl:'The layout shown may differ slightly from the version on your device, as the interface is continuously improved.',
+  btnDl:'▶ Download free on Google Play',
+  hintPhone:'👆 Tap the phone to navigate',
+  appName:'Warranto',cntAtt:'6',cntExp:'1',cntSca:'1',
+  lblAtt:'Active',lblExp:'Expiring',lblSca:'Expired',
+  secExp:'Expiring',secAtt:'Active',secSca:'Expired',
+  dg:'days',dg2:'days',dg3:'days',dg4:'days',dago:'ago',
+  p0n:'55" TV set',p0c:'Electronics',p0e:'Expires 15/03/2025',
+  p1n:'Washing machine 8kg',p1c:'Appliances',p1e:'Expires 10/07/2026',
+  p2n:'Smartphone',p2c:'Mobile',p2e:'Expires 20/09/2025',
+  p3n:'15" Laptop',p3c:'Computing',p3e:'Expires 05/01/2026',
+  p4n:'Video game console',p4c:'Gaming',p4e:'Expired 01/12/2024',
+  navHome:'Home',navStats:'Statistics',navSet:'Settings',fabMod:'Edit',
+  statsLbl:'Total tracked spending',statsOn:'across 8 products',statsReso:'Returns',
+  chartCat:'Spending by category',chartNext:'Upcoming expirations',
+  catTel:'📱 Mobile',catInfo:'💻 Computing',catEl:'🫧 Appliances',catElet:'📺 Electronics',catGame:'🎮 Gaming',
+  setPiano:'Your plan',pianoGrat:'Free plan',pianoSub:'3 products · upgrade to unlock all',upgr:'Upgrade',
+  premTtl:'Unlock Warranto Premium',premSub:'Unlimited · Cloud backup · PDF manuals',
+  setShRate:'Share & Rate',setShare:'Share the app',setSharS:'+1 extra product',setRate:'Rate the app',
+  setBack:'Sharing',setWifi:'WiFi sharing',setWifiS:'Transfer on local network',
+  setCloud:'Cloud backup',setCloudS:'AES-256 encrypted',pro:'PRO',
+  setAsp:'Appearance',setDark:'Dark theme',setDarkS:'Follows system',
+  setNot:'Notifications',setNotG:'Expiry notifications',setNotGS:'30, 14, 7 days before',
+  setNotR:'Return notifications',setNotRS:'Within return window',
+  setNotF:'Instalment notifications',setNotFS:'7, 3, 1 days before',
+  setInfo2:'App',setCod:'Promo code',setAbout:'About',
+  addTtl:'Add warranty',fNome:'Product name *',fNomeH:'e.g. Washing machine 8kg',
+  fCat:'Category',fNeg:'Store',fNegH:'e.g. White goods store',
+  fAcq:'Purchase date',fSca:'Expiry',fPre:'Price (€)',fPag:'Payment',fPagV:'Credit card',
+  secSco:'Receipt',btnFoto:'Photograph receipt',btnScan:'Scan barcode',
+  secExt:'Extra details',fSer:'Serial number',fLink:'Online manual link',
+  btnPdf:'📄 Upload PDF manual 🔒',btnSave:'Save warranty',
+  cEl:'🫧 Appliances',cTel:'📱 Mobile',cInfo:'💻 Computing',cElet:'📺 Electronics',cGame:'🎮 Gaming',cCasa:'🏠 Home',
+  detGar:'Warranty',detPag:'Payment',detAss:'Support',
+  cc:{
+    home:{tag:'Home',title:'All your warranties,\nalways at hand.',lead:'Warranto gathers all your product warranties in one place. Expiring, active and expired are always clearly separated and visible at a glance.',feats:[['🔒','<strong>Data stays on your phone.</strong> No account, no server, no shared data. Total privacy.'],['⚠️','<strong>Colour-coded sections.</strong> Expiring (orange), active (green), expired (red) — crystal clear.'],['📊','<strong>Quick summary.</strong> Pills at the top instantly show how many warranties are active, expiring or expired.']]},
+    detail:{tag:'Detail',title:'Every warranty, in full detail.',lead:'Tap a product to see everything: purchase and expiry dates, price, payment method, serial number, support contact.',feats:[['📖','<strong>Manual always with you.</strong> Save the online manual link or upload the PDF (Premium).'],['↩️','<strong>Return period tracked.</strong> Dedicated notifications before the return window closes.'],['📄','<strong>Export to PDF.</strong> Generate a complete warranty summary in one tap.']]},
+    stats:{tag:'Statistics',title:'How much you spent\nand when it expires.',lead:"See total spending by category and upcoming expiry calendar. Always know the full value of the products you're protecting.",feats:[['💶','<strong>Spending by category.</strong> Discover where you\'ve invested most.'],['📅','<strong>Expirations by urgency.</strong> Warranties closest to expiry always appear first.'],['↩️','<strong>Returns available.</strong> Track products still returnable.']]},
+    settings:{tag:'Settings',title:'Customise notifications\nand protect your data.',lead:'Set reminders, choose theme and manage backup. With Premium you unlock encrypted cloud sync and unlimited products.',feats:[['🔔','<strong>Customisable notifications.</strong> Choose how many days in advance to be notified.'],['☁️','<strong>AES-256 cloud backup (Premium).</strong> Data encrypted on device before uploading.'],['📡','<strong>Local WiFi sharing.</strong> Transfer warranties without internet.']]},
+    add:{tag:'Add',title:'Adding a warranty\nis super fast.',lead:'Enter name, category, dates and price. Photograph the receipt with OCR, scan the manual QR and record instalment financing.',feats:[['🔍','<strong>Receipt OCR (Premium).</strong> Photograph the receipt: app recognises product, date and amount automatically.'],['⬛','<strong>Manual QR code.</strong> Frame the QR on the packaging to save the manual link.'],['💳','<strong>Instalment financing.</strong> Record monthly amount and due date: get notified before each payment.']]},
+  }
+},
+fr:{
+  eyebrow:'Démo interactive',
+  demoTitle:'Explorez <em>Warranto</em> avant de télécharger',
+  demoSub:"Parcourez les écrans de l'app pour découvrir son fonctionnement et décider si elle vous convient.",
+  demoDiscl:"Le layout affiché peut différer légèrement de la version installée, car l'interface est continuellement améliorée.",
+  btnDl:'▶ Télécharger gratuitement sur Google Play',
+  hintPhone:'👆 Touchez le téléphone pour naviguer',
+  appName:'Warranto',cntAtt:'6',cntExp:'1',cntSca:'1',
+  lblAtt:'Actives',lblExp:'Expirant',lblSca:'Expirées',
+  secExp:'Expirant',secAtt:'Actives',secSca:'Expirées',
+  dg:'jours',dg2:'jours',dg3:'jours',dg4:'jours',dago:'il y a',
+  p0n:'Téléviseur 55"',p0c:'Électronique',p0e:'Expire le 15/03/2025',
+  p1n:'Lave-linge 8kg',p1c:'Électroménager',p1e:'Expire le 10/07/2026',
+  p2n:'Smartphone',p2c:'Mobile',p2e:'Expire le 20/09/2025',
+  p3n:'Ordinateur 15"',p3c:'Informatique',p3e:'Expire le 05/01/2026',
+  p4n:'Console de jeux',p4c:'Gaming',p4e:'Expirée le 01/12/2024',
+  navHome:'Accueil',navStats:'Statistiques',navSet:'Paramètres',fabMod:'Modifier',
+  statsLbl:'Dépenses totales',statsOn:'sur 8 produits',statsReso:'Retours',
+  chartCat:'Dépenses par catégorie',chartNext:'Prochaines expirations',
+  catTel:'📱 Mobile',catInfo:'💻 Informatique',catEl:'🫧 Électroménager',catElet:'📺 Électronique',catGame:'🎮 Gaming',
+  setPiano:'Votre plan',pianoGrat:'Plan gratuit',pianoSub:"3 produits · passez à l'offre supérieure",upgr:'Upgrade',
+  premTtl:'Débloquer Warranto Premium',premSub:'Illimité · Cloud · PDF manuels',
+  setShRate:'Partager & Évaluer',setShare:"Partager l'app",setSharS:'+1 produit extra',setRate:"Évaluer l'app",
+  setBack:'Partage',setWifi:'Partage WiFi',setWifiS:'Réseau local uniquement',
+  setCloud:'Sauvegarde cloud',setCloudS:'Chiffré AES-256',pro:'PRO',
+  setAsp:'Apparence',setDark:'Thème sombre',setDarkS:'Suit le système',
+  setNot:'Notifications',setNotG:"Notifs d'expiration",setNotGS:'30, 14, 7 jours avant',
+  setNotR:'Notifs de retour',setNotRS:'Dans la fenêtre de retour',
+  setNotF:"Notifs d'échéance",setNotFS:'7, 3, 1 jours avant',
+  setInfo2:'App',setCod:'Code promo',setAbout:'À propos',
+  addTtl:'Ajouter une garantie',fNome:'Nom du produit *',fNomeH:'ex. Lave-linge 8kg',
+  fCat:'Catégorie',fNeg:'Magasin',fNegH:'ex. Magasin électroménager',
+  fAcq:"Date d'achat",fSca:'Expiration',fPre:'Prix (€)',fPag:'Paiement',fPagV:'Carte de crédit',
+  secSco:'Reçu',btnFoto:'Photographier le reçu',btnScan:'Scanner le code-barres',
+  secExt:'Détails supplémentaires',fSer:'Numéro de série',fLink:'Lien manuel en ligne',
+  btnPdf:'📄 Charger PDF 🔒',btnSave:'Sauvegarder',
+  cEl:'🫧 Électroménager',cTel:'📱 Mobile',cInfo:'💻 Informatique',cElet:'📺 Électronique',cGame:'🎮 Gaming',cCasa:'🏠 Maison',
+  detGar:'Garantie',detPag:'Paiement',detAss:'Assistance',
+  cc:{
+    home:{tag:'Accueil',title:'Toutes vos garanties,\ntoujours à portée.',lead:"Warranto regroupe toutes vos garanties en un seul endroit. Expirant, actives et expirées toujours bien séparées.",feats:[['🔒','<strong>Données sur votre téléphone.</strong> Aucun compte, aucun serveur, aucune donnée partagée.'],['⚠️','<strong>Sections colorées.</strong> Expirant (orange), actives (vert), expirées (rouge).'],['📊','<strong>Résumé rapide.</strong> Les pastilles montrent combien de garanties sont actives ou expirantes.']]},
+    detail:{tag:'Détail',title:'Chaque garantie,\nen détail.',lead:"Appuyez sur un produit pour tout voir : dates, prix, paiement, numéro de série, service client.",feats:[['📖','<strong>Manuel disponible.</strong> Enregistrez le lien ou chargez le PDF (Premium).'],['↩️','<strong>Retour surveillé.</strong> Notifications avant la fin de la fenêtre de retour.'],['📄','<strong>Exporter en PDF.</strong> Récapitulatif complet en un tap.']]},
+    stats:{tag:'Statistiques',title:'Dépenses et\néchéances en un coup d\'œil.',lead:'Visualisez les dépenses par catégorie et les prochaines échéances.',feats:[['💶','<strong>Dépenses par catégorie.</strong> Découvrez où vous avez le plus investi.'],['📅','<strong>Échéances par urgence.</strong> Les plus proches apparaissent en premier.'],['↩️','<strong>Retours disponibles.</strong> Suivez les produits encore remboursables.']]},
+    settings:{tag:'Paramètres',title:'Notifications et\nprotection des données.',lead:'Configurez rappels, thème et sauvegarde. Premium débloque le cloud chiffré et produits illimités.',feats:[['🔔','<strong>Notifications personnalisables.</strong> Choisissez le délai de prévenance.'],['☁️','<strong>Backup cloud AES-256 (Premium).</strong> Chiffré avant envoi.'],['📡','<strong>Partage WiFi local.</strong> Sans internet, sur votre réseau.']]},
+    add:{tag:'Ajouter',title:'Ajouter une garantie\nprend quelques secondes.',lead:'Entrez nom, catégorie, dates et prix. Photographiez le reçu avec OCR et scannez le QR du manuel.',feats:[['🔍','<strong>OCR reçu (Premium).</strong> Photo du reçu → app reconnaît automatiquement produit et montant.'],['⬛','<strong>QR code manuel.</strong> Cadrez le QR pour sauvegarder le lien.'],['💳','<strong>Financement en mensualités.</strong> Recevez des rappels avant chaque échéance.']]},
+  }
+},
+es:{
+  eyebrow:'Demo interactiva',
+  demoTitle:'Explora <em>Warranto</em> antes de descargarlo',
+  demoSub:'Navega por las pantallas de la app para descubrir cómo funciona y decidir si se adapta a ti.',
+  demoDiscl:'El diseño mostrado puede diferir ligeramente de la versión instalada, ya que la interfaz se mejora continuamente.',
+  btnDl:'▶ Descargar gratis en Google Play',
+  hintPhone:'👆 Toca el teléfono para navegar',
+  appName:'Warranto',cntAtt:'6',cntExp:'1',cntSca:'1',
+  lblAtt:'Activas',lblExp:'Por vencer',lblSca:'Vencidas',
+  secExp:'Por vencer',secAtt:'Activas',secSca:'Vencidas',
+  dg:'días',dg2:'días',dg3:'días',dg4:'días',dago:'hace',
+  p0n:'Televisor 55"',p0c:'Electrónica',p0e:'Vence el 15/03/2025',
+  p1n:'Lavadora 8kg',p1c:'Electrodomésticos',p1e:'Vence el 10/07/2026',
+  p2n:'Smartphone',p2c:'Telefonía',p2e:'Vence el 20/09/2025',
+  p3n:'Portátil 15"',p3c:'Informática',p3e:'Vence el 05/01/2026',
+  p4n:'Consola videojuegos',p4c:'Gaming',p4e:'Venció el 01/12/2024',
+  navHome:'Inicio',navStats:'Estadísticas',navSet:'Ajustes',fabMod:'Editar',
+  statsLbl:'Gasto total registrado',statsOn:'en 8 productos',statsReso:'Devoluciones',
+  chartCat:'Gasto por categoría',chartNext:'Próximos vencimientos',
+  catTel:'📱 Telefonía',catInfo:'💻 Informática',catEl:'🫧 Electrodomésticos',catElet:'📺 Electrónica',catGame:'🎮 Gaming',
+  setPiano:'Tu plan',pianoGrat:'Plan gratuito',pianoSub:'3 productos · mejora para desbloquear todo',upgr:'Mejorar',
+  premTtl:'Desbloquear Warranto Premium',premSub:'Ilimitados · Backup cloud · PDF manuales',
+  setShRate:'Compartir & Valorar',setShare:'Compartir la app',setSharS:'+1 producto extra',setRate:'Valorar la app',
+  setBack:'Compartir',setWifi:'Compartir WiFi',setWifiS:'Transferir en red local',
+  setCloud:'Backup cloud',setCloudS:'Cifrado AES-256',pro:'PRO',
+  setAsp:'Apariencia',setDark:'Tema oscuro',setDarkS:'Sigue el sistema',
+  setNot:'Notificaciones',setNotG:'Notificaciones vencimiento',setNotGS:'30, 14, 7 días antes',
+  setNotR:'Notificaciones devolución',setNotRS:'Dentro del período de devolución',
+  setNotF:'Notificaciones cuota',setNotFS:'7, 3, 1 días antes',
+  setInfo2:'App',setCod:'Código promo',setAbout:'Acerca de',
+  addTtl:'Añadir garantía',fNome:'Nombre del producto *',fNomeH:'ej. Lavadora 8kg',
+  fCat:'Categoría',fNeg:'Tienda',fNegH:'ej. Tienda de electrodomésticos',
+  fAcq:'Fecha de compra',fSca:'Vencimiento',fPre:'Precio (€)',fPag:'Pago',fPagV:'Tarjeta de crédito',
+  secSco:'Ticket',btnFoto:'Fotografiar ticket',btnScan:'Escanear código de barras',
+  secExt:'Detalles extra',fSer:'Número de serie',fLink:'Enlace manual online',
+  btnPdf:'📄 Subir PDF manual 🔒',btnSave:'Guardar garantía',
+  cEl:'🫧 Electrodomésticos',cTel:'📱 Telefonía',cInfo:'💻 Informática',cElet:'📺 Electrónica',cGame:'🎮 Gaming',cCasa:'🏠 Casa',
+  detGar:'Garantía',detPag:'Pago',detAss:'Soporte',
+  cc:{
+    home:{tag:'Inicio',title:'Todas tus garantías,\nsiempre a mano.',lead:'Warranto reúne todas las garantías de tus productos en un solo lugar. Por vencer, activas y vencidas siempre bien separadas.',feats:[['🔒','<strong>Datos en tu teléfono.</strong> Sin cuenta obligatoria, sin servidor, sin datos compartidos.'],['⚠️','<strong>Secciones por estado.</strong> Por vencer (naranja), activas (verde), vencidas (rojo).'],['📊','<strong>Resumen rápido.</strong> Las pastillas muestran cuántas garantías tienes activas o por vencer.']]},
+    detail:{tag:'Detalle',title:'Cada garantía, en detalle.',lead:'Toca un producto para ver todo: fechas, precio, método de pago, número de serie y contacto de soporte.',feats:[['📖','<strong>Manual siempre contigo.</strong> Guarda el enlace o sube el PDF (Premium).'],['↩️','<strong>Período de devolución monitoreado.</strong> Notificaciones antes de que venza la ventana.'],['📄','<strong>Exportar a PDF.</strong> Genera un resumen completo en un tap.']]},
+    stats:{tag:'Estadísticas',title:'Cuánto gastaste\ny cuándo vence.',lead:'Visualiza el gasto total por categoría y el calendario de próximos vencimientos.',feats:[['💶','<strong>Gasto por categoría.</strong> Descubre dónde has invertido más.'],['📅','<strong>Vencimientos por urgencia.</strong> Las más próximas siempre arriba.'],['↩️','<strong>Devoluciones disponibles.</strong> Controla los productos aún reembolsables.']]},
+    settings:{tag:'Ajustes',title:'Personaliza notificaciones\ny protege tus datos.',lead:'Configura recordatorios, elige tema y gestiona el backup. Con Premium desbloqueas cloud cifrado y productos ilimitados.',feats:[['🔔','<strong>Notificaciones personalizables.</strong> Elige cuántos días antes quieres ser avisado.'],['☁️','<strong>Backup cloud AES-256 (Premium).</strong> Datos cifrados antes de subir.'],['📡','<strong>Compartir WiFi local.</strong> Sin internet, solo en tu red.']]},
+    add:{tag:'Añadir',title:'Añadir una garantía\nes rapidísimo.',lead:'Introduce nombre, categoría, fechas y precio. Fotografía el ticket con OCR y escanea el QR del manual.',feats:[['🔍','<strong>OCR ticket (Premium).</strong> Fotografía el ticket y la app reconoce producto, fecha e importe.'],['⬛','<strong>QR manual.</strong> Encuadra el QR para guardar el enlace automáticamente.'],['💳','<strong>Financiación a plazos.</strong> Recibe notificaciones antes de cada cuota.']]},
+  }
+},
+de:{
+  eyebrow:'Interaktive Demo',
+  demoTitle:'Entdecke <em>Warranto</em> vor dem Download',
+  demoSub:'Navigiere durch die App-Bildschirme, um zu entdecken wie sie funktioniert und ob sie zu dir passt.',
+  demoDiscl:'Das angezeigte Layout kann sich geringfügig von der installierten Version unterscheiden, da die Benutzeroberfläche kontinuierlich verbessert wird.',
+  btnDl:'▶ Kostenlos auf Google Play herunterladen',
+  hintPhone:'👆 Tippe auf das Telefon zum Navigieren',
+  appName:'Warranto',cntAtt:'6',cntExp:'1',cntSca:'1',
+  lblAtt:'Aktiv',lblExp:'Ablaufend',lblSca:'Abgelaufen',
+  secExp:'Ablaufend',secAtt:'Aktiv',secSca:'Abgelaufen',
+  dg:'Tage',dg2:'Tage',dg3:'Tage',dg4:'Tage',dago:'vor',
+  p0n:'Fernseher 55"',p0c:'Elektronik',p0e:'Läuft ab 15.03.2025',
+  p1n:'Waschmaschine 8kg',p1c:'Haushaltsgeräte',p1e:'Läuft ab 10.07.2026',
+  p2n:'Smartphone',p2c:'Mobilfunk',p2e:'Läuft ab 20.09.2025',
+  p3n:'Laptop 15"',p3c:'Informatik',p3e:'Läuft ab 05.01.2026',
+  p4n:'Spielekonsole',p4c:'Gaming',p4e:'Abgelaufen 01.12.2024',
+  navHome:'Start',navStats:'Statistiken',navSet:'Einstellungen',fabMod:'Bearbeiten',
+  statsLbl:'Erfasste Gesamtausgaben',statsOn:'bei 8 Produkten',statsReso:'Rücksendungen',
+  chartCat:'Ausgaben nach Kategorie',chartNext:'Nächste Abläufe',
+  catTel:'📱 Mobilfunk',catInfo:'💻 Informatik',catEl:'🫧 Haushaltsgeräte',catElet:'📺 Elektronik',catGame:'🎮 Gaming',
+  setPiano:'Ihr Plan',pianoGrat:'Kostenloser Plan',pianoSub:'3 Produkte · Upgrade für alles',upgr:'Upgrade',
+  premTtl:'Warranto Premium freischalten',premSub:'Unbegrenzt · Cloud · PDF-Handbücher',
+  setShRate:'Teilen & Bewerten',setShare:'App teilen',setSharS:'+1 Extra-Produkt',setRate:'App bewerten',
+  setBack:'Teilen',setWifi:'WLAN-Sharing',setWifiS:'Im lokalen Netzwerk übertragen',
+  setCloud:'Cloud-Backup',setCloudS:'AES-256 verschlüsselt',pro:'PRO',
+  setAsp:'Erscheinungsbild',setDark:'Dunkles Design',setDarkS:'Folgt dem System',
+  setNot:'Benachrichtigungen',setNotG:'Ablauf-Benachrichtigungen',setNotGS:'30, 14, 7 Tage vorher',
+  setNotR:'Rücksende-Benachrichtigungen',setNotRS:'Innerhalb des Rückgabefensters',
+  setNotF:'Raten-Benachrichtigungen',setNotFS:'7, 3, 1 Tage vorher',
+  setInfo2:'App',setCod:'Promo-Code',setAbout:'Über',
+  addTtl:'Garantie hinzufügen',fNome:'Produktname *',fNomeH:'z.B. Waschmaschine 8kg',
+  fCat:'Kategorie',fNeg:'Geschäft',fNegH:'z.B. Haushaltsgeräte',
+  fAcq:'Kaufdatum',fSca:'Ablauf',fPre:'Preis (€)',fPag:'Zahlung',fPagV:'Kreditkarte',
+  secSco:'Quittung',btnFoto:'Quittung fotografieren',btnScan:'Barcode scannen',
+  secExt:'Weitere Details',fSer:'Seriennummer',fLink:'Online-Handbuch-Link',
+  btnPdf:'📄 PDF-Handbuch hochladen 🔒',btnSave:'Garantie speichern',
+  cEl:'🫧 Haushaltsgeräte',cTel:'📱 Mobilfunk',cInfo:'💻 Informatik',cElet:'📺 Elektronik',cGame:'🎮 Gaming',cCasa:'🏠 Zuhause',
+  detGar:'Garantie',detPag:'Zahlung',detAss:'Service',
+  cc:{
+    home:{tag:'Start',title:'Alle Garantien,\nimmer griffbereit.',lead:'Warranto sammelt alle Garantien Ihrer Produkte an einem Ort. Ablaufend, aktiv und abgelaufen immer klar getrennt.',feats:[['🔒','<strong>Daten bleiben auf Ihrem Telefon.</strong> Kein Konto, kein Server, keine geteilten Daten.'],['⚠️','<strong>Farbcodierte Abschnitte.</strong> Ablaufend (orange), aktiv (grün), abgelaufen (rot).'],['📊','<strong>Schnellübersicht.</strong> Pills zeigen sofort wie viele Garantien aktiv, ablaufend oder abgelaufen sind.']]},
+    detail:{tag:'Detail',title:'Jede Garantie, im Detail.',lead:'Tippen Sie auf ein Produkt, um alles zu sehen: Kauf- und Ablaufdatum, Preis, Zahlungsmethode, Seriennummer.',feats:[['📖','<strong>Handbuch immer dabei.</strong> Link speichern oder PDF hochladen (Premium).'],['↩️','<strong>Rückgabefrist überwacht.</strong> Benachrichtigungen vor Ende der Rückgabefrist.'],['📄','<strong>Als PDF exportieren.</strong> Vollständige Garantiezusammenfassung in einem Tap.']]},
+    stats:{tag:'Statistiken',title:'Ausgaben und\nAblaufdaten auf einen Blick.',lead:'Gesamtausgaben nach Kategorie und Ablaufkalender immer im Blick.',feats:[['💶','<strong>Ausgaben nach Kategorie.</strong> Sehen Sie wo Sie am meisten investiert haben.'],['📅','<strong>Abläufe nach Dringlichkeit.</strong> Die nächsten erscheinen immer zuerst.'],['↩️','<strong>Rücksendungen verfügbar.</strong> Verfolgen Sie noch erstattungsfähige Produkte.']]},
+    settings:{tag:'Einstellungen',title:'Benachrichtigungen anpassen\nund Daten schützen.',lead:'Erinnerungen konfigurieren, Design wählen und Backup verwalten. Premium schaltet verschlüsseltes Cloud und unbegrenzte Produkte frei.',feats:[['🔔','<strong>Anpassbare Benachrichtigungen.</strong> Wählen Sie wie viele Tage vorher Sie informiert werden möchten.'],['☁️','<strong>AES-256 Cloud-Backup (Premium).</strong> Vor dem Upload auf dem Gerät verschlüsselt.'],['📡','<strong>Lokales WLAN-Sharing.</strong> Ohne Internet, nur im Heimnetzwerk.']]},
+    add:{tag:'Hinzufügen',title:'Eine Garantie hinzufügen\ngeht blitzschnell.',lead:'Name, Kategorie, Datum und Preis eingeben. Quittung mit OCR fotografieren und QR-Code des Handbuchs scannen.',feats:[['🔍','<strong>OCR-Quittung (Premium).</strong> Foto der Quittung → App erkennt Produkt, Datum und Betrag automatisch.'],['⬛','<strong>Handbuch-QR-Code.</strong> QR auf Verpackung scannen, um Link zu speichern.'],['💳','<strong>Ratenzahlung.</strong> Monatsbetrag und Fälligkeitsdatum erfassen: Erinnerungen vor jeder Rate.']]},
+  }
+},
+pt:{
+  eyebrow:'Demo interativa',
+  demoTitle:'Explore o <em>Warranto</em> antes de descarregar',
+  demoSub:'Navegue pelas telas do app para descobrir como funciona e decidir se é para você.',
+  demoDiscl:'O layout exibido pode diferir ligeiramente da versão instalada, pois a interface é continuamente melhorada.',
+  btnDl:'▶ Descarregar grátis no Google Play',
+  hintPhone:'👆 Toque no telemóvel para navegar',
+  appName:'Warranto',cntAtt:'6',cntExp:'1',cntSca:'1',
+  lblAtt:'Ativas',lblExp:'A vencer',lblSca:'Vencidas',
+  secExp:'A vencer',secAtt:'Ativas',secSca:'Vencidas',
+  dg:'dias',dg2:'dias',dg3:'dias',dg4:'dias',dago:'atrás',
+  p0n:'Televisor 55"',p0c:'Eletrónica',p0e:'Expira 15/03/2025',
+  p1n:'Máquina de lavar 8kg',p1c:'Eletrodomésticos',p1e:'Expira 10/07/2026',
+  p2n:'Smartphone',p2c:'Telemóvel',p2e:'Expira 20/09/2025',
+  p3n:'Portátil 15"',p3c:'Informática',p3e:'Expira 05/01/2026',
+  p4n:'Consola de jogos',p4c:'Gaming',p4e:'Expirada 01/12/2024',
+  navHome:'Início',navStats:'Estatísticas',navSet:'Definições',fabMod:'Editar',
+  statsLbl:'Despesa total registada',statsOn:'em 8 produtos',statsReso:'Devoluções',
+  chartCat:'Despesa por categoria',chartNext:'Próximos vencimentos',
+  catTel:'📱 Telemóvel',catInfo:'💻 Informática',catEl:'🫧 Eletrodomésticos',catElet:'📺 Eletrónica',catGame:'🎮 Gaming',
+  setPiano:'O seu plano',pianoGrat:'Plano gratuito',pianoSub:'3 produtos · faça upgrade',upgr:'Upgrade',
+  premTtl:'Desbloquear Warranto Premium',premSub:'Ilimitados · Backup cloud · PDF manuais',
+  setShRate:'Partilhar & Avaliar',setShare:'Partilhar app',setSharS:'+1 produto extra',setRate:'Avaliar app',
+  setBack:'Partilha',setWifi:'Partilha WiFi',setWifiS:'Transferir em rede local',
+  setCloud:'Backup cloud',setCloudS:'Cifrado AES-256',pro:'PRO',
+  setAsp:'Aparência',setDark:'Tema escuro',setDarkS:'Segue o sistema',
+  setNot:'Notificações',setNotG:'Notificações vencimento',setNotGS:'30, 14, 7 dias antes',
+  setNotR:'Notificações devolução',setNotRS:'Dentro da janela de devolução',
+  setNotF:'Notificações prestação',setNotFS:'7, 3, 1 dias antes',
+  setInfo2:'App',setCod:'Código promo',setAbout:'Sobre',
+  addTtl:'Adicionar garantia',fNome:'Nome do produto *',fNomeH:'ex. Máquina de lavar 8kg',
+  fCat:'Categoria',fNeg:'Loja',fNegH:'ex. Loja de eletrodomésticos',
+  fAcq:'Data de compra',fSca:'Vencimento',fPre:'Preço (€)',fPag:'Pagamento',fPagV:'Cartão de crédito',
+  secSco:'Recibo',btnFoto:'Fotografar recibo',btnScan:'Escanear código de barras',
+  secExt:'Detalhes extra',fSer:'Número de série',fLink:'Link do manual online',
+  btnPdf:'📄 Carregar PDF 🔒',btnSave:'Guardar garantia',
+  cEl:'🫧 Eletrodomésticos',cTel:'📱 Telemóvel',cInfo:'💻 Informática',cElet:'📺 Eletrónica',cGame:'🎮 Gaming',cCasa:'🏠 Casa',
+  detGar:'Garantia',detPag:'Pagamento',detAss:'Suporte',
+  cc:{
+    home:{tag:'Início',title:'Todas as garantias,\nsempre à mão.',lead:'O Warranto reúne todas as garantias dos seus produtos em um só lugar. A vencer, ativas e vencidas sempre bem separadas.',feats:[['🔒','<strong>Dados no seu telemóvel.</strong> Sem conta obrigatória, sem servidor, sem dados partilhados.'],['⚠️','<strong>Secções por estado.</strong> A vencer (laranja), ativas (verde), vencidas (vermelho).'],['📊','<strong>Resumo rápido.</strong> As pílulas mostram quantas garantias estão ativas ou a vencer.']]},
+    detail:{tag:'Detalhe',title:'Cada garantia, em detalhe.',lead:'Toque num produto para ver tudo: datas, preço, pagamento, número de série e suporte.',feats:[['📖','<strong>Manual sempre consigo.</strong> Guarde o link ou carregue o PDF (Premium).'],['↩️','<strong>Devolução monitorada.</strong> Notificações antes de fechar a janela de devolução.'],['📄','<strong>Exportar em PDF.</strong> Gere um resumo completo em um toque.']]},
+    stats:{tag:'Estatísticas',title:'Quanto gastou\ne quando vence.',lead:'Visualize despesas por categoria e o calendário de próximos vencimentos.',feats:[['💶','<strong>Despesa por categoria.</strong> Descubra onde investiu mais.'],['📅','<strong>Vencimentos por urgência.</strong> Os mais próximos aparecem sempre primeiro.'],['↩️','<strong>Devoluções disponíveis.</strong> Controle produtos ainda reembolsáveis.']]},
+    settings:{tag:'Definições',title:'Personalizar notificações\ne proteger dados.',lead:'Configure lembretes, escolha tema e gira o backup. Com Premium desbloqueia cloud cifrado e produtos ilimitados.',feats:[['🔔','<strong>Notificações personalizáveis.</strong> Escolha quantos dias antes quer ser avisado.'],['☁️','<strong>Backup cloud AES-256 (Premium).</strong> Dados cifrados antes de enviar.'],['📡','<strong>Partilha WiFi local.</strong> Sem internet, na sua rede doméstica.']]},
+    add:{tag:'Adicionar',title:'Adicionar uma garantia\né rapidíssimo.',lead:'Insira nome, categoria, datas e preço. Fotografe o recibo com OCR e digitalize o QR do manual.',feats:[['🔍','<strong>OCR recibo (Premium).</strong> Foto do recibo → app reconhece produto, data e valor.'],['⬛','<strong>QR manual.</strong> Enquadre o QR para guardar o link automaticamente.'],['💳','<strong>Financiamento em prestações.</strong> Receba notificações antes de cada prestação.']]},
+  }
+},
+};
+
+// Nav translations
+const NAV_I18N = {
+  it:{nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contatti'},
+  en:{nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contact'},
+  fr:{nav_home:'Accueil',nav_demo:'Démo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Confidentialité',nav_contact:'Contact'},
+  es:{nav_home:'Inicio',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidad',nav_contact:'Contacto'},
+  de:{nav_home:'Startseite',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Datenschutz',nav_contact:'Kontakt'},
+  pt:{nav_home:'Início',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidade',nav_contact:'Contato'},
+};
+
+const PRODS = [
+  {icon:'📺',stato:'exp',days:14,dk:'dg',n:'p0n',c:'p0c',e:'p0e',price:'€ 799'},
+  {icon:'🫧',stato:'att',days:598,dk:'dg2',n:'p1n',c:'p1c',e:'p1e',price:'€ 499'},
+  {icon:'📱',stato:'att',days:240,dk:'dg3',n:'p2n',c:'p2c',e:'p2e',price:'€ 649'},
+];
+
+// ══ Detect language: check localStorage first (synced with index), then system ══
+const sysL = (navigator.language || 'it').toLowerCase().slice(0,2);
+let curLang;
+try { curLang = localStorage.getItem('warranto_lang') || (LANGS[sysL] ? sysL : 'it'); } catch(e) { curLang = LANGS[sysL] ? sysL : 'it'; }
+let curScreen = 'home', curDet = 0;
+const tr = k => (LANGS[curLang] && LANGS[curLang][k]) || LANGS.it[k] || k;
+
+function setLang(l) {
+  if (!LANGS[l]) return;
+  curLang = l;
+  try { localStorage.setItem('warranto_lang', l); } catch(e) {}
+  // update flag buttons
+  document.querySelectorAll('.lang-flag').forEach(f => f.classList.toggle('active', f.getAttribute('data-lang') === l));
+  // update nav
+  const nt = NAV_I18N[l] || NAV_I18N.it;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (nt[k]) el.textContent = nt[k];
+  });
+  applyT();
+}
+
+function applyT() {
+  document.getElementById('eyebrow').textContent = tr('eyebrow');
+  document.getElementById('demo-title').innerHTML = tr('demoTitle');
+  document.getElementById('demo-sub').textContent = tr('demoSub');
+  document.getElementById('demo-discl').textContent = tr('demoDiscl');
+  document.getElementById('btn-dl').textContent = tr('btnDl');
+  document.getElementById('hint-phone').textContent = tr('hintPhone');
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const k = el.getAttribute('data-t');
+    const v = tr(k);
+    if (v && v !== k) el.textContent = v;
+  });
+  document.querySelectorAll('[data-tp]').forEach(el => {
+    const v = tr(el.getAttribute('data-tp'));
+    if (v) el.placeholder = v;
+  });
+  document.querySelectorAll('[data-tv]').forEach(el => {
+    const v = tr(el.getAttribute('data-tv'));
+    if (v) el.value = v;
+  });
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
+  updateCC(curScreen);
+  if (curScreen === 'detail') openDetail(curDet);
+}
+
+function updateCC(id) {
+  const screens = ['home','detail','stats','settings','add'];
+  screens.forEach(s => document.getElementById('sd-'+s)?.classList.toggle('active', s===id));
+  document.querySelectorAll('.cc-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('cc-'+id)?.classList.add('active');
+  const data = LANGS[curLang]?.cc?.[id];
+  if (!data) return;
+  const sfx = {home:'home', detail:'det', stats:'stats', settings:'set', add:'add'}[id];
+  const tag   = document.getElementById('cct-'+sfx);
+  const title = document.getElementById('cct-'+sfx+'-t');
+  const lead  = document.getElementById('cct-'+sfx+'-l');
+  const feats = document.getElementById('cct-'+sfx+'-f');
+  const discl = document.getElementById('cct-'+sfx+'-d');
+  if (tag)   tag.textContent = data.tag;
+  if (title) title.innerHTML = data.title.replace(/\n/g,'<br>');
+  if (lead)  lead.textContent = data.lead;
+  if (feats) feats.innerHTML = data.feats.map(([i,t]) =>
+    `<div class="cc-feat"><span class="cc-feat-icon">${i}</span><div class="cc-feat-text">${t}</div></div>`
+  ).join('');
+  if (discl) discl.textContent = tr('demoDiscl');
+}
+
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('sc-'+id).classList.add('active');
+  const darkSBs = ['home','detail','stats','add'];
+  const sb = document.getElementById('sb');
+  sb.style.background = darkSBs.includes(id) ? 'var(--app-primary)' : 'var(--app-surface)';
+  sb.style.color = darkSBs.includes(id) ? 'white' : 'var(--app-on-surface)';
+  curScreen = id;
+  updateCC(id);
+}
+
+function openDetail(idx) {
+  curDet = idx;
+  const p = PRODS[idx];
+  const hdrCls = p.stato==='exp' ? 'det-hdr exp' : p.stato==='sca' ? 'det-hdr sca' : 'det-hdr';
+  const sc  = p.stato==='exp' ? 'var(--app-orange)' : p.stato==='sca' ? 'var(--app-red)' : 'var(--app-green-c)';
+  const sbg = p.stato==='exp' ? 'var(--app-orange-l)' : p.stato==='sca' ? 'var(--app-red-l)' : 'var(--app-green-l)';
+  const sc2 = p.stato==='exp' ? 'var(--app-orange)' : p.stato==='sca' ? 'var(--app-red)' : 'var(--app-green)';
+  const slabel = p.stato==='exp' ? '⚠ '+tr('secExp') : p.stato==='sca' ? '✕ '+tr('secSca') : '✓ '+tr('secAtt');
+  document.getElementById('det-hero').innerHTML = `
+    <div class="${hdrCls}">
+      <div style="display:flex;align-items:center;padding-top:3px;margin-bottom:7px">
+        <button class="det-back" onclick="goScreen('home')">← ${tr('navHome')}</button>
+        <div style="margin-left:auto;display:flex">
+          <button class="ib" style="font-size:.82rem">📄</button>
+          <button class="ib" style="font-size:.82rem">🗑</button>
+        </div>
+      </div>
+      <div class="det-ico-box">${p.icon}</div>
+      <div class="det-name">${tr(p.n)}</div>
+      <div class="det-sub">${tr(p.c)}</div>
+    </div>
+    <div class="stato-strip" style="background:${sbg};color:${sc2}">
+      ${slabel} — <strong>${p.days} ${tr(p.dk)}</strong>
+    </div>`;
+  document.getElementById('det-body').innerHTML = `
+    <div style="height:6px"></div>
+    <div class="det-sec">
+      <div class="det-sec-hdr"><span class="dsico">🛡</span><span class="dstitl">${tr('detGar')}</span><span class="dschev">›</span></div>
+      <div class="ir"><span class="ir-i">📅</span><span class="ir-l">${tr('fAcq')}</span><span class="ir-v">12/03/2024</span></div>
+      <div class="ir"><span class="ir-i">⏰</span><span class="ir-l">${tr('fSca')}</span><span class="ir-v hi" style="color:${sc2}">${tr(p.e)}</span></div>
+    </div>
+    <div class="det-sec">
+      <div class="det-sec-hdr"><span class="dsico">💳</span><span class="dstitl">${tr('detPag')}</span><span class="dschev">›</span></div>
+      <div class="ir"><span class="ir-i">💶</span><span class="ir-l">${tr('fPre')}</span><span class="ir-v">${p.price}</span></div>
+      <div class="ir"><span class="ir-i">💳</span><span class="ir-l">${tr('fPag')}</span><span class="ir-v">${tr('fPagV')}</span></div>
+    </div>
+    <div class="det-sec">
+      <div class="det-sec-hdr"><span class="dsico">🔧</span><span class="dstitl">${tr('detAss')}</span><span class="dschev">›</span></div>
+      <div class="ir"><span class="ir-i">🔢</span><span class="ir-l">${tr('fSer')}</span><span class="ir-v" style="font-family:monospace;font-size:.64rem">SN-XXXXXXXXXX</span></div>
+    </div>
+    <div style="height:72px"></div>`;
+  const fe = document.getElementById('fab-edit');
+  if (fe) fe.innerHTML = `✏ <span>${tr('fabMod')}</span>`;
+  goScreen('detail');
+}
+
+function selChip(el) {
+  document.querySelectorAll('#chips .chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+// clock
+setInterval(() => {
+  const t = new Date().toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
+  document.getElementById('clock').textContent = t;
+  const c2 = document.getElementById('clock2');
+  if (c2) c2.textContent = t;
+}, 30000);
+
+// init
+setLang(curLang);
+</script>
+</body>
+</html>

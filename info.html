@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warranto — Info</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --blue-deep:#0D47A1;--blue-mid:#1565C0;--blue-bright:#1E88E5;
+      --blue-light:#BBDEFB;--off-white:#F7F9FC;--text:#1A1F2E;
+      --text-muted:#5A6072;--accent:#00B0FF;--radius:16px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);overflow-x:hidden}
+    .fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
+
+    /* ══ LANGUAGE SWITCHER — top left ══ */
+    .lang-switcher{position:fixed;top:22px;left:48px;z-index:600;display:flex;gap:6px;align-items:center}
+    .lang-flag{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);transition:all 0.18s;line-height:1}
+    .lang-flag:hover{border-color:white;background:rgba(255,255,255,0.25)}
+    .lang-flag.active{border-color:white;background:rgba(255,255,255,0.35);box-shadow:0 0 0 2px rgba(255,255,255,0.5)}
+
+    /* ══ NAV — top right ══ */
+    nav{position:fixed;top:0;right:0;z-index:500;padding:20px 48px;background:transparent}
+    .nav-links{display:flex;gap:22px;list-style:none;align-items:center}
+    .nav-links a{text-decoration:none;font-size:.87rem;font-weight:500;color:white;opacity:.82;text-shadow:0 1px 8px rgba(0,0,0,.6);transition:opacity .2s}
+    .nav-links a:hover,.nav-links a.active{opacity:1;font-weight:700}
+
+    /* ══ SITE HERO ══ */
+    .site-hero{display:grid;grid-template-columns:1fr 1fr;min-height:44vh;
+      background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue-bright) 60%,#29B6F6 100%);
+      position:relative;overflow:hidden}
+    .site-hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:80px;background:var(--off-white);clip-path:ellipse(55% 100% at 50% 100%)}
+    .hero-img-half{position:relative;overflow:hidden;display:flex;align-items:stretch}
+    .hero-img-half img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;opacity:.9}
+    .hero-text-half{display:flex;flex-direction:column;justify-content:center;padding:70px 56px 90px 48px;position:relative;z-index:1}
+    .hero-appname{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,5.5vw,5.5rem);font-weight:700;color:white;letter-spacing:-2px;line-height:1;margin-bottom:16px}
+    .hero-page-title{font-family:'DM Serif Display',serif;font-size:clamp(1.2rem,2.2vw,1.8rem);color:rgba(255,255,255,.88);line-height:1.3;margin-bottom:10px}
+    .hero-page-title em{color:var(--accent);font-style:italic}
+    .hero-page-sub{color:rgba(255,255,255,.7);font-size:.93rem;line-height:1.7;font-weight:300;max-width:400px}
+
+    /* ══ FOOTER ══ */
+    footer{background:var(--text);border-top:1px solid rgba(255,255,255,.06);padding:48px;text-align:center}
+    .foot-logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px}
+    .foot-logo-img{width:34px;height:34px;object-fit:contain;border-radius:8px}
+    .foot-logo-name{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:white}
+    .footer-sub{color:rgba(255,255,255,.4);font-size:.85rem;margin-bottom:20px}
+    .footer-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+    .footer-links a{color:rgba(255,255,255,.5);font-size:.85rem;text-decoration:none;transition:color .2s}
+    .footer-links a:hover{color:white}
+
+    /* ══ PAGE CONTENT ══ */
+    .content{max-width:960px;margin:0 auto;padding:64px 48px 80px}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px}
+    .info-card{background:white;border-radius:var(--radius);padding:32px;border:1px solid rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s}
+    .info-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(21,101,192,.1)}
+    .info-card-icon{width:48px;height:48px;background:var(--blue-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:18px}
+    .info-card h3{font-size:1rem;font-weight:600;margin-bottom:8px}
+    .info-card p{color:var(--text-muted);font-size:.88rem;line-height:1.65;font-weight:300}
+    .about-block{background:linear-gradient(135deg,var(--blue-deep),var(--blue-mid));border-radius:var(--radius);padding:48px;margin-bottom:40px}
+    .about-block h2{font-family:'DM Serif Display',serif;font-size:clamp(1.5rem,2.5vw,2rem);color:white;margin-bottom:12px}
+    .about-block p{color:rgba(255,255,255,.8);font-size:.95rem;line-height:1.7;font-weight:300}
+    .contact-card{background:white;border-radius:var(--radius);padding:40px;border:1px solid rgba(0,0,0,.06);text-align:center;margin-bottom:40px}
+    .contact-card h3{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:10px}
+    .contact-card p{color:var(--text-muted);font-size:.95rem;line-height:1.7;margin-bottom:24px;font-weight:300}
+    .btn-contact{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--blue-mid),var(--blue-bright));color:white;padding:13px 28px;border-radius:100px;font-weight:600;font-size:.9rem;text-decoration:none;transition:opacity .2s}
+    .btn-contact:hover{opacity:.9}
+
+    @media(max-width:768px){
+      nav{padding:14px 18px}.nav-links{gap:12px}.nav-links a{font-size:.74rem}
+      .lang-switcher{left:18px;top:14px}.lang-flag{width:26px;height:26px;font-size:1rem}
+      .site-hero{grid-template-columns:1fr}.hero-img-half{height:180px}
+      .hero-text-half{padding:32px 24px 80px}.hero-appname{font-size:2.8rem}
+      .info-grid{grid-template-columns:1fr}.content{padding:48px 24px}.about-block{padding:32px}
+      footer{padding:40px 24px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LANGUAGE SWITCHER — top left -->
+  <div class="lang-switcher">
+    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
+    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
+    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
+    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
+    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
+    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+  </div>
+
+  <!-- NAV — top right -->
+  <nav>
+    <ul class="nav-links">
+      <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+      <li><a href="demo.html" data-i18n="nav_demo">Demo</a></li>
+      <li><a href="premium.html" data-i18n="nav_premium">Premium</a></li>
+      <li><a href="info.html" class="active" data-i18n="nav_info">Info</a></li>
+      <li><a href="privacy.html" data-i18n="nav_privacy">Privacy</a></li>
+      <li><a href="contatti.html" data-i18n="nav_contact">Contatti</a></li>
+    </ul>
+  </nav>
+
+  <div class="site-hero">
+    <div class="hero-img-half"><img src="logo.png" alt="Warranto"></div>
+    <div class="hero-text-half">
+      <div class="hero-appname">Warranto</div>
+      <div class="hero-page-title" data-i18n="ph_title">Info &amp; <em>Chi siamo</em></div>
+      <p class="hero-page-sub" data-i18n="ph_sub">Chi siamo, come funziona l'app, e come gestiamo i tuoi dati.</p>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="about-block fade-in">
+      <h2 data-i18n="about_title">Costruito per proteggere i tuoi acquisti</h2>
+      <p data-i18n="about_p">Warranto nasce da una semplice frustrazione: perdere le scadenze delle garanzie e i relativi scontrini. Ogni funzione è progettata per essere il più semplice possibile — aggiungi un prodotto in pochi secondi, ricevi una notifica prima che sia troppo tardi. Nessun account obbligatorio, nessun abbonamento, nessuna pubblicità.</p>
+    </div>
+
+    <div class="info-grid fade-in">
+      <div class="info-card">
+        <div class="info-card-icon">🛡️</div>
+        <h3 data-i18n="ic1_t">Privacy sempre</h3>
+        <p data-i18n="ic1_p">Tutti i dati sono salvati localmente. Nessun account richiesto. Il backup cloud cifra tutto con AES-256 prima del caricamento.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🆓</div>
+        <h3 data-i18n="ic2_t">Gratis + Premium opzionale</h3>
+        <p data-i18n="ic2_p">Versione gratuita completa fino a 3 prodotti. Premium €1,99 una tantum sblocca prodotti illimitati, backup e PDF manuali.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🌍</div>
+        <h3 data-i18n="ic3_t">6 lingue</h3>
+        <p data-i18n="ic3_p">Italiano, inglese, francese, spagnolo, tedesco, portoghese. L'app usa automaticamente la lingua del telefono.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">📡</div>
+        <h3 data-i18n="ic4_t">Condivisione WiFi</h3>
+        <p data-i18n="ic4_p">Condividi le garanzie con la famiglia sulla stessa rete WiFi. I dati non escono mai dalla rete locale.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🏢</div>
+        <h3 data-i18n="ic5_t">Sviluppato da Domixia</h3>
+        <p data-i18n="ic5_p">Domixia è uno studio di sviluppo software indipendente. Warranto è la nostra prima release Android, con impegno a lungo termine.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🤖</div>
+        <h3 data-i18n="ic6_t">Android · iOS prossimamente</h3>
+        <p data-i18n="ic6_p">Disponibile su Google Play. Una versione iOS è in sviluppo e sarà rilasciata in futuro.</p>
+      </div>
+    </div>
+
+    <div class="contact-card fade-in">
+      <h3 data-i18n="cc_title">Scrivici</h3>
+      <p data-i18n="cc_p">Domande, feedback, segnalazioni di bug o richieste di partnership. Rispondiamo entro 24–48 ore.</p>
+      <a href="mailto:info@domixia.com" class="btn-contact">✉ info@domixia.com</a>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="foot-logo-row">
+      <img src="logo.png" alt="Warranto" class="foot-logo-img">
+      <span class="foot-logo-name">Warranto</span>
+    </div>
+    <p class="footer-sub">Domixia · 2026</p>
+    <div class="footer-links">
+      <a href="index.html" data-i18n="nav_home">Home</a>
+      <a href="demo.html" data-i18n="nav_demo">Demo</a>
+      <a href="premium.html" data-i18n="nav_premium">Premium</a>
+      <a href="info.html" data-i18n="nav_info">Info</a>
+      <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
+      <a href="https://play.google.com/store/apps/details?id=com.warranto.app">Play Store</a>
+      <a href="contatti.html" data-i18n="nav_contact">Contatti</a>
+    </div>
+  </footer>
+
+<script>
+const T={
+it:{
+  nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contatti',
+  ph_title:'Info &amp; <em>Chi siamo</em>',ph_sub:"Chi siamo, come funziona l'app, e come gestiamo i tuoi dati.",
+  about_title:'Costruito per proteggere i tuoi acquisti',
+  about_p:"Warranto nasce da una semplice frustrazione: perdere le scadenze delle garanzie e i relativi scontrini. Ogni funzione è progettata per essere il più semplice possibile — aggiungi un prodotto in pochi secondi, ricevi una notifica prima che sia troppo tardi. Nessun account obbligatorio, nessun abbonamento, nessuna pubblicità.",
+  ic1_t:'Privacy sempre',ic1_p:'Tutti i dati sono salvati localmente. Nessun account richiesto. Il backup cloud cifra tutto con AES-256 prima del caricamento.',
+  ic2_t:'Gratis + Premium opzionale',ic2_p:'Versione gratuita completa fino a 3 prodotti. Premium €1,99 una tantum sblocca prodotti illimitati, backup e PDF manuali.',
+  ic3_t:'6 lingue',ic3_p:"Italiano, inglese, francese, spagnolo, tedesco, portoghese. L'app usa automaticamente la lingua del telefono.",
+  ic4_t:'Condivisione WiFi',ic4_p:'Condividi le garanzie con la famiglia sulla stessa rete WiFi. I dati non escono mai dalla rete locale.',
+  ic5_t:'Sviluppato da Domixia',ic5_p:"Domixia è uno studio di sviluppo software indipendente. Warranto è la nostra prima release Android, con impegno a lungo termine.",
+  ic6_t:'Android · iOS prossimamente',ic6_p:'Disponibile su Google Play. Una versione iOS è in sviluppo e sarà rilasciata in futuro.',
+  cc_title:'Scrivici',cc_p:'Domande, feedback, segnalazioni di bug o richieste di partnership. Rispondiamo entro 24–48 ore.',
+},
+en:{
+  nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contact',
+  ph_title:'Info &amp; <em>About us</em>',ph_sub:'Who we are, how the app works, and how we handle your data.',
+  about_title:'Built to protect your purchases',
+  about_p:"Warranto was born from a simple frustration: missing warranty expiry dates and losing receipts. Every feature is designed to be as simple as possible — add a product in seconds, get a notification before it's too late. No mandatory account, no subscription, no ads.",
+  ic1_t:'Privacy always',ic1_p:'All data is saved locally. No account required. Cloud backup encrypts everything with AES-256 before uploading.',
+  ic2_t:'Free + optional Premium',ic2_p:'Full free version up to 3 products. Premium €1.99 one-time unlocks unlimited products, backup and PDF manuals.',
+  ic3_t:'6 languages',ic3_p:"Italian, English, French, Spanish, German, Portuguese. The app automatically uses your phone's language.",
+  ic4_t:'WiFi sharing',ic4_p:'Share warranties with your family on the same WiFi network. Data never leaves your local network.',
+  ic5_t:'Developed by Domixia',ic5_p:'Domixia is an independent software development studio. Warranto is our first Android release, with a long-term commitment.',
+  ic6_t:'Android · iOS coming soon',ic6_p:'Available on Google Play. An iOS version is in development and will be released in the future.',
+  cc_title:'Write to us',cc_p:'Questions, feedback, bug reports or partnership enquiries. We reply within 24–48 hours.',
+},
+fr:{
+  nav_home:'Accueil',nav_demo:'Démo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Confidentialité',nav_contact:'Contact',
+  ph_title:'Info &amp; <em>Qui sommes-nous</em>',ph_sub:"Qui nous sommes, comment fonctionne l'app, et comment nous gérons vos données.",
+  about_title:'Construit pour protéger vos achats',
+  about_p:"Warranto est né d'une frustration simple : manquer les dates d'expiration des garanties et perdre les reçus. Chaque fonctionnalité est conçue pour être aussi simple que possible — ajoutez un produit en quelques secondes, recevez une notification avant qu'il ne soit trop tard. Aucun compte obligatoire, aucun abonnement, aucune publicité.",
+  ic1_t:'Confidentialité toujours',ic1_p:"Toutes les données sont sauvegardées localement. Aucun compte requis. La sauvegarde cloud chiffre tout avec AES-256 avant l'envoi.",
+  ic2_t:'Gratuit + Premium optionnel',ic2_p:'Version gratuite complète jusqu\'à 3 produits. Premium 1,99€ unique débloque produits illimités, backup et PDF manuels.',
+  ic3_t:'6 langues',ic3_p:"Italien, anglais, français, espagnol, allemand, portugais. L'app utilise automatiquement la langue du téléphone.",
+  ic4_t:'Partage WiFi',ic4_p:'Partagez les garanties avec votre famille sur le même réseau WiFi. Les données ne quittent jamais votre réseau local.',
+  ic5_t:'Développé par Domixia',ic5_p:'Domixia est un studio de développement logiciel indépendant. Warranto est notre première version Android, avec un engagement à long terme.',
+  ic6_t:'Android · iOS prochainement',ic6_p:'Disponible sur Google Play. Une version iOS est en développement et sera publiée à l\'avenir.',
+  cc_title:'Écrivez-nous',cc_p:'Questions, retours, signalements de bugs ou demandes de partenariat. Nous répondons sous 24–48 heures.',
+},
+es:{
+  nav_home:'Inicio',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidad',nav_contact:'Contacto',
+  ph_title:'Info &amp; <em>Quiénes somos</em>',ph_sub:'Quiénes somos, cómo funciona la app y cómo gestionamos tus datos.',
+  about_title:'Construido para proteger tus compras',
+  about_p:'Warranto nació de una frustración simple: perder las fechas de vencimiento de las garantías y los recibos. Cada función está diseñada para ser lo más simple posible — añade un producto en segundos, recibe una notificación antes de que sea demasiado tarde. Sin cuenta obligatoria, sin suscripción, sin publicidad.',
+  ic1_t:'Privacidad siempre',ic1_p:'Todos los datos se guardan localmente. Sin cuenta requerida. El backup cloud cifra todo con AES-256 antes de la carga.',
+  ic2_t:'Gratis + Premium opcional',ic2_p:'Versión gratuita completa hasta 3 productos. Premium €1,99 único desbloquea productos ilimitados, backup y PDF manuales.',
+  ic3_t:'6 idiomas',ic3_p:"Italian, inglés, francés, español, alemán, portugués. La app usa automáticamente el idioma del teléfono.",
+  ic4_t:'Compartir WiFi',ic4_p:'Comparte las garantías con tu familia en la misma red WiFi. Los datos nunca salen de tu red local.',
+  ic5_t:'Desarrollado por Domixia',ic5_p:'Domixia es un estudio de desarrollo de software independiente. Warranto es nuestro primer lanzamiento Android, con compromiso a largo plazo.',
+  ic6_t:'Android · iOS próximamente',ic6_p:'Disponible en Google Play. Una versión iOS está en desarrollo y se lanzará en el futuro.',
+  cc_title:'Escríbenos',cc_p:'Preguntas, comentarios, reportes de errores o solicitudes de asociación. Respondemos en 24–48 horas.',
+},
+de:{
+  nav_home:'Startseite',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Datenschutz',nav_contact:'Kontakt',
+  ph_title:'Info &amp; <em>Über uns</em>',ph_sub:'Wer wir sind, wie die App funktioniert und wie wir Ihre Daten verwalten.',
+  about_title:'Gebaut, um Ihre Einkäufe zu schützen',
+  about_p:'Warranto entstand aus einer einfachen Frustration: Garantie-Ablaufdaten und Kassenbelege zu verpassen. Jede Funktion ist so einfach wie möglich gestaltet — fügen Sie ein Produkt in Sekunden hinzu, erhalten Sie eine Benachrichtigung bevor es zu spät ist. Kein obligatorisches Konto, kein Abonnement, keine Werbung.',
+  ic1_t:'Immer Datenschutz',ic1_p:'Alle Daten werden lokal gespeichert. Kein Konto erforderlich. Cloud-Backup verschlüsselt alles mit AES-256 vor dem Hochladen.',
+  ic2_t:'Kostenlos + optionales Premium',ic2_p:'Vollständige kostenlose Version für bis zu 3 Produkte. Premium 1,99€ einmalig schaltet unbegrenzte Produkte, Backup und PDF-Anleitungen frei.',
+  ic3_t:'6 Sprachen',ic3_p:'Italienisch, Englisch, Französisch, Spanisch, Deutsch, Portugiesisch. Die App verwendet automatisch die Sprache des Telefons.',
+  ic4_t:'WLAN-Freigabe',ic4_p:'Teilen Sie Garantien mit Ihrer Familie im selben WLAN-Netzwerk. Daten verlassen nie Ihr lokales Netzwerk.',
+  ic5_t:'Entwickelt von Domixia',ic5_p:'Domixia ist ein unabhängiges Softwareentwicklungsstudio. Warranto ist unser erstes Android-Release mit langfristigem Engagement.',
+  ic6_t:'Android · iOS demnächst',ic6_p:'Auf Google Play verfügbar. Eine iOS-Version ist in Entwicklung und wird in Zukunft veröffentlicht.',
+  cc_title:'Schreiben Sie uns',cc_p:'Fragen, Feedback, Fehlermeldungen oder Partnerschaftsanfragen. Wir antworten innerhalb von 24–48 Stunden.',
+},
+pt:{
+  nav_home:'Início',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidade',nav_contact:'Contato',
+  ph_title:'Info &amp; <em>Quem somos</em>',ph_sub:'Quem somos, como o app funciona e como gerenciamos seus dados.',
+  about_title:'Construído para proteger suas compras',
+  about_p:'O Warranto nasceu de uma frustração simples: perder as datas de vencimento das garantias e os recibos. Cada função é projetada para ser o mais simples possível — adicione um produto em segundos, receba uma notificação antes que seja tarde demais. Sem conta obrigatória, sem assinatura, sem publicidade.',
+  ic1_t:'Privacidade sempre',ic1_p:'Todos os dados são salvos localmente. Nenhuma conta necessária. O backup cloud criptografa tudo com AES-256 antes do upload.',
+  ic2_t:'Grátis + Premium opcional',ic2_p:'Versão gratuita completa para até 3 produtos. Premium €1,99 único desbloqueia produtos ilimitados, backup e PDF de manuais.',
+  ic3_t:'6 idiomas',ic3_p:"Italiano, inglês, francês, espanhol, alemão, português. O app usa automaticamente o idioma do telefone.",
+  ic4_t:'Compartilhamento WiFi',ic4_p:'Compartilhe garantias com sua família na mesma rede WiFi. Os dados nunca saem da sua rede local.',
+  ic5_t:'Desenvolvido pela Domixia',ic5_p:'Domixia é um estúdio de desenvolvimento de software independente. Warranto é nosso primeiro lançamento Android, com compromisso de longo prazo.',
+  ic6_t:'Android · iOS em breve',ic6_p:'Disponível no Google Play. Uma versão iOS está em desenvolvimento e será lançada no futuro.',
+  cc_title:'Escreva-nos',cc_p:'Perguntas, feedback, relatórios de bugs ou solicitações de parceria. Respondemos em 24–48 horas.',
+},
+};
+
+// Legge la lingua da localStorage (sincronizzata con index e demo)
+let lang;
+try { lang = localStorage.getItem('warranto_lang') || (navigator.language||'it').slice(0,2); } catch(e) { lang = 'it'; }
+if (!T[lang]) lang = 'it';
+
+function setLang(l) {
+  lang = l;
+  try { localStorage.setItem('warranto_lang', l); } catch(e) {}
+  document.querySelectorAll('.lang-flag').forEach(b => b.classList.toggle('active', b.getAttribute('data-lang') === l));
+  const t = T[l] || T.en;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (t[k] !== undefined) el.innerHTML = t[k];
+  });
+}
+
+// Fade-in on scroll
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, {threshold: 0.15});
+document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+
+setLang(lang);
+</script>
+</body>
+</html>

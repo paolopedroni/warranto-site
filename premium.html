@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warranto — Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --blue-deep:#0D47A1;--blue-mid:#1565C0;--blue-bright:#1E88E5;
+      --blue-light:#BBDEFB;--off-white:#F7F9FC;--text:#1A1F2E;
+      --text-muted:#5A6072;--accent:#00B0FF;--radius:16px;
+      --gold:#F59E0B;--gold-light:#FEF3C7;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);overflow-x:hidden}
+    .fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
+
+    /* ══ LANGUAGE SWITCHER ══ */
+    .lang-switcher{position:fixed;top:22px;left:48px;z-index:600;display:flex;gap:6px;align-items:center}
+    .lang-flag{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);transition:all 0.18s;line-height:1}
+    .lang-flag:hover{border-color:white;background:rgba(255,255,255,0.25)}
+    .lang-flag.active{border-color:white;background:rgba(255,255,255,0.35);box-shadow:0 0 0 2px rgba(255,255,255,0.5)}
+
+    /* ══ NAV ══ */
+    nav{position:fixed;top:0;right:0;z-index:500;padding:20px 48px;background:transparent}
+    .nav-links{display:flex;gap:22px;list-style:none;align-items:center}
+    .nav-links a{text-decoration:none;font-size:.87rem;font-weight:500;color:white;opacity:.82;text-shadow:0 1px 8px rgba(0,0,0,.6);transition:opacity .2s}
+    .nav-links a:hover,.nav-links a.active{opacity:1;font-weight:700}
+
+    /* ══ SITE HERO ══ */
+    /* ALTEZZA HEADER: 44vh — cambia questo valore per modificare l'altezza dell'header */
+    .site-hero{display:grid;grid-template-columns:1fr 1fr;min-height:44vh;
+      background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue-bright) 60%,#29B6F6 100%);
+      position:relative;overflow:hidden}
+    .site-hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:80px;background:var(--off-white);clip-path:ellipse(55% 100% at 50% 100%)}
+    .hero-img-half{position:relative;overflow:hidden;display:flex;align-items:stretch}
+    .hero-img-half img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;opacity:.9}
+    .hero-text-half{display:flex;flex-direction:column;justify-content:center;padding:70px 56px 90px 48px;position:relative;z-index:1}
+    .hero-appname{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,5.5vw,5.5rem);font-weight:700;color:white;letter-spacing:-2px;line-height:1;margin-bottom:16px}
+    .hero-page-title{font-family:'DM Serif Display',serif;font-size:clamp(1.2rem,2.2vw,1.8rem);color:rgba(255,255,255,.88);line-height:1.3;margin-bottom:10px}
+    .hero-page-title em{color:var(--accent);font-style:italic}
+    .hero-page-sub{color:rgba(255,255,255,.7);font-size:.93rem;line-height:1.7;font-weight:300;max-width:400px}
+
+    /* ══ FOOTER ══ */
+    footer{background:var(--text);border-top:1px solid rgba(255,255,255,.06);padding:48px;text-align:center}
+    .foot-logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px}
+    .foot-logo-img{width:34px;height:34px;object-fit:contain;border-radius:8px}
+    .foot-logo-name{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:white}
+    .footer-sub{color:rgba(255,255,255,.4);font-size:.85rem;margin-bottom:20px}
+    .footer-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+    .footer-links a{color:rgba(255,255,255,.5);font-size:.85rem;text-decoration:none;transition:color .2s}
+    .footer-links a:hover{color:white}
+
+    /* ══ PREMIUM PAGE CONTENT ══ */
+    .premium-wrap{max-width:1100px;margin:0 auto;padding:80px 48px}
+
+    /* Price hero section */
+    .price-section{text-align:center;padding:80px 48px 60px;background:white;border-bottom:1px solid rgba(0,0,0,.06)}
+    .price-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+    .price-title{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4vw,3rem);color:var(--text);margin-bottom:12px}
+    .price-title em{color:var(--blue-bright);font-style:italic}
+    .price-sub{color:var(--text-muted);font-size:1rem;font-weight:300;max-width:560px;margin:0 auto 48px}
+
+    .cards-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:48px}
+
+    .price-card{background:white;border:1.5px solid rgba(0,0,0,.1);border-radius:20px;padding:36px 32px;width:300px;position:relative;transition:transform .2s,box-shadow .2s}
+    .price-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.1)}
+    .price-card.free-card{background:var(--off-white)}
+    .price-card.premium-card{border:2px solid var(--gold);background:linear-gradient(160deg,#fffbf0 0%,white 60%);box-shadow:0 8px 40px rgba(245,158,11,.15)}
+    .card-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--gold);color:white;font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 16px;border-radius:100px}
+    .card-plan-name{font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px}
+    .card-plan-name.gold{color:var(--gold)}
+    .card-price{font-family:'DM Serif Display',serif;font-size:3.2rem;color:var(--text);line-height:1;margin-bottom:4px}
+    .card-price span{font-size:1.4rem;vertical-align:super;font-family:'DM Sans',sans-serif;font-weight:500}
+    .card-price-note{font-size:.8rem;color:var(--text-muted);margin-bottom:24px;font-weight:300}
+    .card-features{list-style:none;margin-bottom:28px;text-align:left}
+    .card-features li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;font-size:.88rem;color:var(--text-muted);border-bottom:1px solid rgba(0,0,0,.05)}
+    .card-features li:last-child{border-bottom:none}
+    .card-features li .cf-icon{width:20px;flex-shrink:0;font-size:.9rem;margin-top:1px}
+    .card-features li.disabled{opacity:.45}
+    .card-features li.disabled .cf-icon::before{content:'—'}
+    .card-btn{display:block;width:100%;padding:14px;border-radius:100px;font-weight:600;font-size:.92rem;text-align:center;text-decoration:none;transition:transform .15s,box-shadow .15s;cursor:pointer;border:none}
+    .card-btn.free-btn{background:transparent;border:1.5px solid rgba(0,0,0,.15);color:var(--text-muted)}
+    .card-btn.premium-btn{background:linear-gradient(135deg,var(--gold),#f97316);color:white;box-shadow:0 6px 24px rgba(245,158,11,.35)}
+    .card-btn.premium-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(245,158,11,.45)}
+
+    /* Comparison table */
+    .comparison-section{padding:80px 48px;background:var(--off-white)}
+    .comparison-inner{max-width:860px;margin:0 auto}
+    .section-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue-bright);margin-bottom:12px}
+    .section-title{font-family:'DM Serif Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--text);margin-bottom:8px}
+    .section-sub{color:var(--text-muted);font-size:.95rem;font-weight:300;margin-bottom:40px}
+    .comp-table{width:100%;border-collapse:collapse;background:white;border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+    .comp-table th{padding:18px 20px;font-size:.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--blue-deep);color:white}
+    .comp-table th:first-child{text-align:left;width:50%}
+    .comp-table th:not(:first-child){text-align:center;width:25%}
+    .comp-table td{padding:14px 20px;font-size:.9rem;border-bottom:1px solid rgba(0,0,0,.05);color:var(--text)}
+    .comp-table td:first-child{font-weight:500}
+    .comp-table td:not(:first-child){text-align:center;font-size:1rem}
+    .comp-table tr:last-child td{border-bottom:none}
+    .comp-table tr:hover td{background:rgba(30,136,229,.03)}
+    .comp-table .cat-row td{background:rgba(13,71,161,.04);font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue-mid);padding:10px 20px}
+    .check{color:#16a34a;font-size:1.1rem}
+    .cross{color:#9ca3af;font-size:.9rem}
+    .limited{color:var(--gold);font-size:.8rem;font-weight:600}
+
+    /* FAQ / value props */
+    .value-section{padding:80px 48px;background:white}
+    .value-inner{max-width:900px;margin:0 auto}
+    .value-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:40px}
+    .value-card{background:var(--off-white);border-radius:var(--radius);padding:28px;border:1px solid rgba(0,0,0,.06)}
+    .value-icon{font-size:2rem;margin-bottom:14px;display:block}
+    .value-card h3{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:8px}
+    .value-card p{font-size:.88rem;color:var(--text-muted);line-height:1.65;font-weight:300}
+
+    /* CTA */
+    .cta-strip{background:linear-gradient(135deg,var(--blue-deep),var(--blue-bright));padding:80px 48px;text-align:center}
+    .cta-strip h2{font-family:'DM Serif Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:white;margin-bottom:12px}
+    .cta-strip p{color:rgba(255,255,255,.75);font-size:1rem;margin-bottom:32px;font-weight:300}
+    .cta-btns{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+    .btn-cta-gold{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--gold),#f97316);color:white;padding:14px 32px;border-radius:100px;font-weight:600;font-size:.95rem;text-decoration:none;box-shadow:0 8px 32px rgba(245,158,11,.4);transition:transform .2s}
+    .btn-cta-gold:hover{transform:translateY(-2px)}
+    .btn-outline-white{display:inline-flex;align-items:center;gap:8px;color:white;border:1.5px solid rgba(255,255,255,.5);padding:14px 32px;border-radius:100px;font-weight:500;font-size:.95rem;text-decoration:none;transition:background .2s}
+    .btn-outline-white:hover{background:rgba(255,255,255,.1)}
+
+    @media(max-width:768px){
+      nav{padding:14px 18px}.nav-links{gap:12px}.nav-links a{font-size:.74rem}
+      .lang-switcher{left:18px;top:14px}.lang-flag{width:26px;height:26px;font-size:1rem}
+      .site-hero{grid-template-columns:1fr}.hero-img-half{height:180px}
+      .hero-text-half{padding:32px 24px 80px}.hero-appname{font-size:2.8rem}
+      .price-section,.comparison-section,.value-section,.cta-strip{padding:60px 24px}
+      .cards-row{flex-direction:column;align-items:center}
+      .price-card{width:100%;max-width:340px}
+      .value-grid{grid-template-columns:1fr}
+      .comp-table th,.comp-table td{padding:12px 12px;font-size:.82rem}
+      footer{padding:40px 24px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="lang-switcher" id="langSwitcher">
+  <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
+  <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
+  <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
+  <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
+  <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
+  <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+</div>
+
+<nav>
+  <ul class="nav-links">
+    <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+    <li><a href="demo.html" data-i18n="nav_demo">Demo</a></li>
+    <li><a href="premium.html" class="active" data-i18n="nav_premium">Premium</a></li>
+    <li><a href="info.html" data-i18n="nav_info">Info</a></li>
+    <li><a href="privacy.html" data-i18n="nav_privacy">Privacy</a></li>
+    <li><a href="/cdn-cgi/l/email-protection#e1858e8c88998880cf858497a1868c80888dcf828e8c" data-i18n="nav_contact">Contatti</a></li>
+  </ul>
+</nav>
+
+<div class="site-hero">
+  <div class="hero-img-half"><img src="logo.png" alt="Warranto"></div>
+  <div class="hero-text-half">
+    <div class="hero-appname">Warranto</div>
+    <div class="hero-page-title" data-i18n="ph_title">Sblocca il <em>massimo potenziale</em></div>
+    <p class="hero-page-sub" data-i18n="ph_sub">Un unico acquisto, per sempre. Prodotti illimitati, backup cloud cifrato e tutte le funzioni premium.</p>
+  </div>
+</div>
+
+<!-- PRICE SECTION -->
+<div class="price-section">
+  <p class="price-eyebrow" data-i18n="ps_eyebrow">✦ Piano Premium</p>
+  <h1 class="price-title" data-i18n="ps_title">Un pagamento, <em>per sempre</em></h1>
+  <p class="price-sub" data-i18n="ps_sub">Nessun abbonamento mensile. Paghi una sola volta e sblocchi tutto per sempre. Nessuna sorpresa in bolletta.</p>
+
+  <div class="cards-row">
+    <!-- FREE -->
+    <div class="price-card free-card fade-in">
+      <p class="card-plan-name" data-i18n="c_free_name">Piano Gratuito</p>
+      <div class="card-price"><span></span>0</div>
+      <p class="card-price-note" data-i18n="c_free_note">Sempre gratuito</p>
+      <ul class="card-features">
+        <li><span class="cf-icon">📦</span><span data-i18n="cf_prod3">Fino a 3 prodotti</span></li>
+        <li><span class="cf-icon">🔔</span><span data-i18n="cf_notif">Notifiche di scadenza</span></li>
+        <li><span class="cf-icon">📊</span><span data-i18n="cf_stats">Statistiche base</span></li>
+        <li><span class="cf-icon">📡</span><span data-i18n="cf_wifi">Condivisione WiFi</span></li>
+        <li class="disabled"><span class="cf-icon"></span><span data-i18n="cf_unlim">Prodotti illimitati</span></li>
+        <li class="disabled"><span class="cf-icon"></span><span data-i18n="cf_cloud">Backup cloud AES-256</span></li>
+        <li class="disabled"><span class="cf-icon"></span><span data-i18n="cf_ocr">OCR scontrino</span></li>
+        <li class="disabled"><span class="cf-icon"></span><span data-i18n="cf_pdf">PDF manuali</span></li>
+      </ul>
+      <button class="card-btn free-btn" data-i18n="c_free_btn">Piano attuale</button>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="price-card premium-card fade-in">
+      <div class="card-badge" data-i18n="c_prem_badge">🏆 Consigliato</div>
+      <p class="card-plan-name gold">Premium</p>
+      <div class="card-price"><span>€</span>1<span style="font-size:1.4rem;vertical-align:baseline">.99</span></div>
+      <p class="card-price-note" data-i18n="c_prem_note">Una tantum — nessun abbonamento</p>
+      <ul class="card-features">
+        <li><span class="cf-icon">📦</span><span data-i18n="cf_unlim">Prodotti illimitati</span></li>
+        <li><span class="cf-icon">🔔</span><span data-i18n="cf_notif">Notifiche di scadenza</span></li>
+        <li><span class="cf-icon">☁️</span><span data-i18n="cf_cloud">Backup cloud AES-256</span></li>
+        <li><span class="cf-icon">📊</span><span data-i18n="cf_stats">Statistiche base</span></li>
+        <li><span class="cf-icon">📡</span><span data-i18n="cf_wifi">Condivisione WiFi</span></li>
+        <li><span class="cf-icon">🔍</span><span data-i18n="cf_ocr">OCR scontrino automatico</span></li>
+        <li><span class="cf-icon">📄</span><span data-i18n="cf_pdf">Carica PDF manuali</span></li>
+        <li><span class="cf-icon">♾️</span><span data-i18n="cf_forever">Valido per sempre</span></li>
+      </ul>
+      <a href="https://play.google.com/store/apps/details?id=com.warranto.app" class="card-btn premium-btn" data-i18n="c_prem_btn">▶ Sblocca su Google Play</a>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="comparison-section">
+  <div class="comparison-inner">
+    <div class="fade-in">
+      <p class="section-eyebrow" data-i18n="cmp_eyebrow">Confronto</p>
+      <h2 class="section-title" data-i18n="cmp_title">Gratuito vs Premium</h2>
+      <p class="section-sub" data-i18n="cmp_sub">Scopri esattamente cosa sblocchi con Premium.</p>
+    </div>
+    <table class="comp-table fade-in">
+      <thead>
+        <tr>
+          <th data-i18n="th_feature">Funzione</th>
+          <th data-i18n="th_free">Gratuito</th>
+          <th style="background:var(--gold)" data-i18n="th_premium">Premium</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="3" data-i18n="cat_core">Funzioni principali</td></tr>
+        <tr>
+          <td data-i18n="row_prods">Numero di prodotti</td>
+          <td><span class="limited" data-i18n="row_prods_free">max 3</span></td>
+          <td><span class="check">✓</span> <span class="limited" style="color:var(--check)" data-i18n="row_prods_prem">Illimitati</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="row_notif">Notifiche scadenza</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="row_reso">Notifiche periodo reso</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="row_stats">Statistiche di spesa</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="row_dark">Tema chiaro / scuro</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr class="cat-row"><td colspan="3" data-i18n="cat_premium">Funzioni Premium</td></tr>
+        <tr>
+          <td data-i18n="row_cloud">Backup cloud cifrato AES-256</td>
+          <td><span class="cross">—</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="row_ocr">OCR automatico scontrino</td>
+          <td><span class="cross">—</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="row_pdf">Caricamento PDF manuale</td>
+          <td><span class="cross">—</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="row_wifi">Condivisione WiFi locale</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="row_fin">Notifiche rate finanziamento</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="row_price">Prezzo</td>
+          <td><strong>€ 0</strong></td>
+          <td><strong style="color:var(--gold)">€ 1,99 una tantum</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- VALUE PROPS -->
+<div class="value-section">
+  <div class="value-inner">
+    <div class="fade-in">
+      <p class="section-eyebrow" data-i18n="vp_eyebrow">Perché scegliere Premium</p>
+      <h2 class="section-title" data-i18n="vp_title">Tutto questo per meno di un caffè</h2>
+      <p class="section-sub" data-i18n="vp_sub">Acquisto singolo, nessun rinnovo, nessun abbonamento nascosto.</p>
+    </div>
+    <div class="value-grid">
+      <div class="value-card fade-in">
+        <span class="value-icon">♾️</span>
+        <h3 data-i18n="v1_t">Una tantum, per sempre</h3>
+        <p data-i18n="v1_p">Paghi una volta sola e il Premium è tuo per sempre, anche per tutti gli aggiornamenti futuri dell'app.</p>
+      </div>
+      <div class="value-card fade-in">
+        <span class="value-icon">☁️</span>
+        <h3 data-i18n="v2_t">Backup veramente privato</h3>
+        <p data-i18n="v2_p">I tuoi dati vengono cifrati con AES-256 sul telefono prima di essere caricati. Nemmeno noi possiamo leggerli.</p>
+      </div>
+      <div class="value-card fade-in">
+        <span class="value-icon">📦</span>
+        <h3 data-i18n="v3_t">Prodotti illimitati</h3>
+        <p data-i18n="v3_p">Aggiungi tutti i prodotti che vuoi — elettronica, elettrodomestici, auto, biciclette, utensili. Nessun limite.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <h2 data-i18n="cta_title">Pronto a sbloccare tutto?</h2>
+  <p data-i18n="cta_sub">Scarica Warranto gratis, prova le funzioni base, poi decidi se vuoi il Premium.</p>
+  <div class="cta-btns">
+    <a href="https://play.google.com/store/apps/details?id=com.warranto.app" class="btn-cta-gold" data-i18n="cta_btn_dl">▶ Scarica su Google Play</a>
+    <a href="demo.html" class="btn-outline-white" data-i18n="cta_btn_demo">Prova la demo prima</a>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-logo-row">
+    <img src="logo.png" alt="Warranto" class="foot-logo-img">
+    <span class="foot-logo-name">Warranto</span>
+  </div>
+  <p class="footer-sub">Domixia · 2026</p>
+  <div class="footer-links">
+    <a href="index.html" data-i18n="nav_home">Home</a>
+    <a href="demo.html" data-i18n="nav_demo">Demo</a>
+    <a href="premium.html" data-i18n="nav_premium">Premium</a>
+    <a href="info.html" data-i18n="nav_info">Info</a>
+    <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
+    <a href="https://play.google.com/store/apps/details?id=com.warranto.app">Play Store</a>
+    <a href="/cdn-cgi/l/email-protection#2642494b4f5e4f470842435066414b474f4a0845494b" data-i18n="nav_contact">Contatti</a>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const T={
+it:{
+  nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contatti',
+  ph_title:'Sblocca il <em>massimo potenziale</em>',
+  ph_sub:'Un unico acquisto, per sempre. Prodotti illimitati, backup cloud cifrato e tutte le funzioni premium.',
+  ps_eyebrow:'✦ Piano Premium',
+  ps_title:'Un pagamento, <em>per sempre</em>',
+  ps_sub:'Nessun abbonamento mensile. Paghi una sola volta e sblocchi tutto per sempre. Nessuna sorpresa in bolletta.',
+  c_free_name:'Piano Gratuito',c_free_note:'Sempre gratuito',c_free_btn:'Piano attuale',
+  c_prem_badge:'🏆 Consigliato',c_prem_note:'Una tantum — nessun abbonamento',c_prem_btn:'▶ Sblocca su Google Play',
+  cf_prod3:'Fino a 3 prodotti',cf_notif:'Notifiche di scadenza',cf_stats:'Statistiche',cf_wifi:'Condivisione WiFi',
+  cf_unlim:'Prodotti illimitati',cf_cloud:'Backup cloud AES-256',cf_ocr:'OCR scontrino automatico',cf_pdf:'Carica PDF manuali',cf_forever:'Valido per sempre',
+  cmp_eyebrow:'Confronto',cmp_title:'Gratuito vs Premium',cmp_sub:'Scopri esattamente cosa sblocchi con Premium.',
+  th_feature:'Funzione',th_free:'Gratuito',th_premium:'Premium',
+  cat_core:'Funzioni principali',cat_premium:'Funzioni Premium',
+  row_prods:'Numero di prodotti',row_prods_free:'max 3',row_prods_prem:'Illimitati',
+  row_notif:'Notifiche scadenza',row_reso:'Notifiche periodo reso',row_stats:'Statistiche di spesa',
+  row_dark:'Tema chiaro / scuro',row_cloud:'Backup cloud cifrato AES-256',row_ocr:'OCR automatico scontrino',
+  row_pdf:'Caricamento PDF manuale',row_wifi:'Condivisione WiFi locale',row_fin:'Notifiche rate finanziamento',row_price:'Prezzo',
+  vp_eyebrow:'Perché scegliere Premium',vp_title:'Tutto questo per meno di un caffè',vp_sub:'Acquisto singolo, nessun rinnovo, nessun abbonamento nascosto.',
+  v1_t:'Una tantum, per sempre',v1_p:'Paghi una volta sola e il Premium è tuo per sempre, anche per tutti gli aggiornamenti futuri dell\'app.',
+  v2_t:'Backup veramente privato',v2_p:'I tuoi dati vengono cifrati con AES-256 sul telefono prima di essere caricati. Nemmeno noi possiamo leggerli.',
+  v3_t:'Prodotti illimitati',v3_p:'Aggiungi tutti i prodotti che vuoi — elettronica, elettrodomestici, auto, biciclette, utensili. Nessun limite.',
+  cta_title:'Pronto a sbloccare tutto?',cta_sub:'Scarica Warranto gratis, prova le funzioni base, poi decidi se vuoi il Premium.',
+  cta_btn_dl:'▶ Scarica su Google Play',cta_btn_demo:'Prova la demo prima',
+},
+en:{
+  nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contact',
+  ph_title:'Unlock the <em>full potential</em>',
+  ph_sub:'One purchase, forever. Unlimited products, encrypted cloud backup, and all premium features.',
+  ps_eyebrow:'✦ Premium Plan',
+  ps_title:'One payment, <em>forever</em>',
+  ps_sub:'No monthly subscription. Pay once and unlock everything forever. No surprise bills.',
+  c_free_name:'Free Plan',c_free_note:'Always free',c_free_btn:'Current plan',
+  c_prem_badge:'🏆 Recommended',c_prem_note:'One-time — no subscription',c_prem_btn:'▶ Unlock on Google Play',
+  cf_prod3:'Up to 3 products',cf_notif:'Expiry notifications',cf_stats:'Statistics',cf_wifi:'WiFi sharing',
+  cf_unlim:'Unlimited products',cf_cloud:'AES-256 cloud backup',cf_ocr:'Automatic receipt OCR',cf_pdf:'Upload PDF manuals',cf_forever:'Valid forever',
+  cmp_eyebrow:'Comparison',cmp_title:'Free vs Premium',cmp_sub:'See exactly what you unlock with Premium.',
+  th_feature:'Feature',th_free:'Free',th_premium:'Premium',
+  cat_core:'Core features',cat_premium:'Premium features',
+  row_prods:'Number of products',row_prods_free:'max 3',row_prods_prem:'Unlimited',
+  row_notif:'Expiry notifications',row_reso:'Return period notifications',row_stats:'Spending statistics',
+  row_dark:'Light / dark theme',row_cloud:'AES-256 encrypted cloud backup',row_ocr:'Automatic receipt OCR',
+  row_pdf:'PDF manual upload',row_wifi:'Local WiFi sharing',row_fin:'Instalment notifications',row_price:'Price',
+  vp_eyebrow:'Why choose Premium',vp_title:'All this for less than a coffee',vp_sub:'Single purchase, no renewals, no hidden subscription.',
+  v1_t:'One-time, forever',v1_p:'Pay once and Premium is yours forever, including all future app updates.',
+  v2_t:'Truly private backup',v2_p:'Your data is AES-256 encrypted on your phone before uploading. Even we cannot read it.',
+  v3_t:'Unlimited products',v3_p:'Add as many products as you want — electronics, appliances, cars, bikes, tools. No limits.',
+  cta_title:'Ready to unlock everything?',cta_sub:'Download Warranto for free, try the basic features, then decide if you want Premium.',
+  cta_btn_dl:'▶ Download on Google Play',cta_btn_demo:'Try the demo first',
+},
+fr:{
+  nav_home:'Accueil',nav_demo:'Démo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Confidentialité',nav_contact:'Contact',
+  ph_title:'Débloquez le <em>plein potentiel</em>',
+  ph_sub:'Un seul achat, pour toujours. Produits illimités, sauvegarde cloud chiffrée et toutes les fonctions premium.',
+  ps_eyebrow:'✦ Plan Premium',
+  ps_title:'Un paiement, <em>pour toujours</em>',
+  ps_sub:'Pas d\'abonnement mensuel. Payez une fois et débloquez tout pour toujours. Aucune surprise.',
+  c_free_name:'Plan Gratuit',c_free_note:'Toujours gratuit',c_free_btn:'Plan actuel',
+  c_prem_badge:'🏆 Recommandé',c_prem_note:'Unique — sans abonnement',c_prem_btn:'▶ Débloquer sur Google Play',
+  cf_prod3:'Jusqu\'à 3 produits',cf_notif:'Notifications d\'expiration',cf_stats:'Statistiques',cf_wifi:'Partage WiFi',
+  cf_unlim:'Produits illimités',cf_cloud:'Sauvegarde cloud AES-256',cf_ocr:'OCR reçu automatique',cf_pdf:'Charger PDF manuels',cf_forever:'Valide pour toujours',
+  cmp_eyebrow:'Comparaison',cmp_title:'Gratuit vs Premium',cmp_sub:'Découvrez exactement ce que vous débloquez avec Premium.',
+  th_feature:'Fonctionnalité',th_free:'Gratuit',th_premium:'Premium',
+  cat_core:'Fonctions principales',cat_premium:'Fonctions Premium',
+  row_prods:'Nombre de produits',row_prods_free:'max 3',row_prods_prem:'Illimités',
+  row_notif:'Notifications d\'expiration',row_reso:'Notifications retour',row_stats:'Statistiques de dépenses',
+  row_dark:'Thème clair / sombre',row_cloud:'Backup cloud chiffré AES-256',row_ocr:'OCR reçu automatique',
+  row_pdf:'Chargement PDF manuel',row_wifi:'Partage WiFi local',row_fin:'Notifications d\'échéance',row_price:'Prix',
+  vp_eyebrow:'Pourquoi choisir Premium',vp_title:'Tout ça pour moins d\'un café',vp_sub:'Achat unique, pas de renouvellement, pas d\'abonnement caché.',
+  v1_t:'Unique, pour toujours',v1_p:'Payez une fois et Premium vous appartient pour toujours, y compris les futures mises à jour.',
+  v2_t:'Sauvegarde vraiment privée',v2_p:'Vos données sont chiffrées AES-256 sur votre téléphone avant l\'envoi. Même nous ne pouvons pas les lire.',
+  v3_t:'Produits illimités',v3_p:'Ajoutez autant de produits que vous voulez — électronique, électroménager, voitures, vélos, outils.',
+  cta_title:'Prêt à tout débloquer ?',cta_sub:'Téléchargez Warranto gratuitement, essayez les fonctions de base, puis décidez.',
+  cta_btn_dl:'▶ Télécharger sur Google Play',cta_btn_demo:'Essayer la démo d\'abord',
+},
+es:{
+  nav_home:'Inicio',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidad',nav_contact:'Contacto',
+  ph_title:'Desbloquea el <em>máximo potencial</em>',
+  ph_sub:'Una sola compra, para siempre. Productos ilimitados, copia de seguridad cifrada y todas las funciones premium.',
+  ps_eyebrow:'✦ Plan Premium',
+  ps_title:'Un pago, <em>para siempre</em>',
+  ps_sub:'Sin suscripción mensual. Pagas una vez y desbloqueas todo para siempre. Sin sorpresas.',
+  c_free_name:'Plan Gratuito',c_free_note:'Siempre gratuito',c_free_btn:'Plan actual',
+  c_prem_badge:'🏆 Recomendado',c_prem_note:'Único — sin suscripción',c_prem_btn:'▶ Desbloquear en Google Play',
+  cf_prod3:'Hasta 3 productos',cf_notif:'Notificaciones de vencimiento',cf_stats:'Estadísticas',cf_wifi:'Compartir WiFi',
+  cf_unlim:'Productos ilimitados',cf_cloud:'Backup cloud AES-256',cf_ocr:'OCR recibo automático',cf_pdf:'Cargar PDF manuales',cf_forever:'Válido para siempre',
+  cmp_eyebrow:'Comparación',cmp_title:'Gratuito vs Premium',cmp_sub:'Descubre exactamente qué desbloqueas con Premium.',
+  th_feature:'Función',th_free:'Gratuito',th_premium:'Premium',
+  cat_core:'Funciones principales',cat_premium:'Funciones Premium',
+  row_prods:'Número de productos',row_prods_free:'max 3',row_prods_prem:'Ilimitados',
+  row_notif:'Notificaciones de vencimiento',row_reso:'Notificaciones de devolución',row_stats:'Estadísticas de gasto',
+  row_dark:'Tema claro / oscuro',row_cloud:'Backup cloud cifrado AES-256',row_ocr:'OCR recibo automático',
+  row_pdf:'Carga PDF manual',row_wifi:'Compartir WiFi local',row_fin:'Notificaciones de cuota',row_price:'Precio',
+  vp_eyebrow:'Por qué elegir Premium',vp_title:'Todo esto por menos de un café',vp_sub:'Compra única, sin renovaciones, sin suscripción oculta.',
+  v1_t:'Único, para siempre',v1_p:'Pagas una vez y Premium es tuyo para siempre, incluidas todas las actualizaciones futuras.',
+  v2_t:'Copia de seguridad verdaderamente privada',v2_p:'Tus datos se cifran con AES-256 en tu teléfono antes de cargarse. Ni nosotros podemos leerlos.',
+  v3_t:'Productos ilimitados',v3_p:'Añade todos los productos que quieras — electrónica, electrodomésticos, coches, bicicletas, herramientas.',
+  cta_title:'¿Listo para desbloquear todo?',cta_sub:'Descarga Warranto gratis, prueba las funciones básicas, luego decide.',
+  cta_btn_dl:'▶ Descargar en Google Play',cta_btn_demo:'Probar la demo primero',
+},
+de:{
+  nav_home:'Startseite',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Datenschutz',nav_contact:'Kontakt',
+  ph_title:'Das <em>volle Potenzial</em> freischalten',
+  ph_sub:'Ein Kauf, für immer. Unbegrenzte Produkte, verschlüsseltes Cloud-Backup und alle Premium-Funktionen.',
+  ps_eyebrow:'✦ Premium Plan',
+  ps_title:'Eine Zahlung, <em>für immer</em>',
+  ps_sub:'Kein Monatsabo. Einmal bezahlen und alles für immer freischalten. Keine versteckten Kosten.',
+  c_free_name:'Kostenloser Plan',c_free_note:'Immer kostenlos',c_free_btn:'Aktueller Plan',
+  c_prem_badge:'🏆 Empfohlen',c_prem_note:'Einmalig — kein Abo',c_prem_btn:'▶ Bei Google Play freischalten',
+  cf_prod3:'Bis zu 3 Produkte',cf_notif:'Ablauf-Benachrichtigungen',cf_stats:'Statistiken',cf_wifi:'WLAN-Freigabe',
+  cf_unlim:'Unbegrenzte Produkte',cf_cloud:'AES-256 Cloud-Backup',cf_ocr:'Automatisches Kassenbon-OCR',cf_pdf:'PDF-Anleitungen hochladen',cf_forever:'Für immer gültig',
+  cmp_eyebrow:'Vergleich',cmp_title:'Kostenlos vs Premium',cmp_sub:'Entdecken Sie genau, was Sie mit Premium freischalten.',
+  th_feature:'Funktion',th_free:'Kostenlos',th_premium:'Premium',
+  cat_core:'Kernfunktionen',cat_premium:'Premium-Funktionen',
+  row_prods:'Anzahl Produkte',row_prods_free:'max 3',row_prods_prem:'Unbegrenzt',
+  row_notif:'Ablauf-Benachrichtigungen',row_reso:'Rückgabe-Benachrichtigungen',row_stats:'Ausgaben-Statistiken',
+  row_dark:'Helles / dunkles Design',row_cloud:'AES-256 verschlüsseltes Cloud-Backup',row_ocr:'Automatisches Kassenbon-OCR',
+  row_pdf:'PDF-Anleitungen hochladen',row_wifi:'Lokale WLAN-Freigabe',row_fin:'Raten-Benachrichtigungen',row_price:'Preis',
+  vp_eyebrow:'Warum Premium wählen',vp_title:'Alles das für weniger als ein Kaffee',vp_sub:'Einmaliger Kauf, keine Verlängerung, kein verstecktes Abo.',
+  v1_t:'Einmalig, für immer',v1_p:'Einmal zahlen und Premium gehört Ihnen für immer, einschließlich aller zukünftigen App-Updates.',
+  v2_t:'Wirklich privates Backup',v2_p:'Ihre Daten werden mit AES-256 auf dem Gerät verschlüsselt, bevor sie hochgeladen werden. Selbst wir können sie nicht lesen.',
+  v3_t:'Unbegrenzte Produkte',v3_p:'Fügen Sie so viele Produkte hinzu wie Sie möchten — Elektronik, Haushaltsgeräte, Autos, Fahrräder, Werkzeuge.',
+  cta_title:'Bereit, alles freizuschalten?',cta_sub:'Laden Sie Warranto kostenlos herunter, testen Sie die Grundfunktionen, dann entscheiden Sie.',
+  cta_btn_dl:'▶ Bei Google Play herunterladen',cta_btn_demo:'Erst die Demo ausprobieren',
+},
+pt:{
+  nav_home:'Início',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidade',nav_contact:'Contato',
+  ph_title:'Desbloqueie o <em>máximo potencial</em>',
+  ph_sub:'Uma única compra, para sempre. Produtos ilimitados, backup cloud criptografado e todas as funções premium.',
+  ps_eyebrow:'✦ Plano Premium',
+  ps_title:'Um pagamento, <em>para sempre</em>',
+  ps_sub:'Sem assinatura mensal. Pague uma vez e desbloqueie tudo para sempre. Sem surpresas.',
+  c_free_name:'Plano Gratuito',c_free_note:'Sempre gratuito',c_free_btn:'Plano atual',
+  c_prem_badge:'🏆 Recomendado',c_prem_note:'Único — sem assinatura',c_prem_btn:'▶ Desbloquear no Google Play',
+  cf_prod3:'Até 3 produtos',cf_notif:'Notificações de vencimento',cf_stats:'Estatísticas',cf_wifi:'Compartilhamento WiFi',
+  cf_unlim:'Produtos ilimitados',cf_cloud:'Backup cloud AES-256',cf_ocr:'OCR recibo automático',cf_pdf:'Carregar PDF manuais',cf_forever:'Válido para sempre',
+  cmp_eyebrow:'Comparação',cmp_title:'Gratuito vs Premium',cmp_sub:'Descubra exatamente o que você desbloqueia com o Premium.',
+  th_feature:'Função',th_free:'Gratuito',th_premium:'Premium',
+  cat_core:'Funções principais',cat_premium:'Funções Premium',
+  row_prods:'Número de produtos',row_prods_free:'max 3',row_prods_prem:'Ilimitados',
+  row_notif:'Notificações de vencimento',row_reso:'Notificações de devolução',row_stats:'Estatísticas de gastos',
+  row_dark:'Tema claro / escuro',row_cloud:'Backup cloud criptografado AES-256',row_ocr:'OCR recibo automático',
+  row_pdf:'Upload PDF manual',row_wifi:'Compartilhamento WiFi local',row_fin:'Notificações de parcela',row_price:'Preço',
+  vp_eyebrow:'Por que escolher Premium',vp_title:'Tudo isso por menos de um café',vp_sub:'Compra única, sem renovações, sem assinatura oculta.',
+  v1_t:'Único, para sempre',v1_p:'Pague uma vez e o Premium é seu para sempre, incluindo todas as atualizações futuras do app.',
+  v2_t:'Backup verdadeiramente privado',v2_p:'Seus dados são criptografados com AES-256 no telefone antes de serem carregados. Nem nós podemos lê-los.',
+  v3_t:'Produtos ilimitados',v3_p:'Adicione quantos produtos quiser — eletrônicos, eletrodomésticos, carros, bicicletas, ferramentas.',
+  cta_title:'Pronto para desbloquear tudo?',cta_sub:'Baixe o Warranto grátis, experimente as funções básicas, depois decida.',
+  cta_btn_dl:'▶ Baixar no Google Play',cta_btn_demo:'Experimentar a demo primeiro',
+},
+};
+
+let lang;
+try { lang = localStorage.getItem('warranto_lang') || (navigator.language||'it').slice(0,2); } catch(e) { lang='it'; }
+if (!T[lang]) lang='it';
+
+function setLang(l){
+  lang=l;
+  try { localStorage.setItem('warranto_lang', l); } catch(e) {}
+  document.querySelectorAll('.lang-flag').forEach(b=>b.classList.toggle('active',b.getAttribute('data-lang')===l));
+  const t=T[l]||T.en;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(t[k]!==undefined) el.innerHTML=t[k];
+  });
+}
+
+// Intersection Observer for fade-in
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}});
+},{threshold:0.12});
+document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
+
+setLang(lang);
+</script>
+</body>
+</html>

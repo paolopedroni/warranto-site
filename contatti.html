@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warranto — Contatti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --blue-deep:#0D47A1;--blue-mid:#1565C0;--blue-bright:#1E88E5;
+      --blue-light:#BBDEFB;--off-white:#F7F9FC;--text:#1A1F2E;
+      --text-muted:#5A6072;--accent:#00B0FF;--radius:16px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);overflow-x:hidden}
+    .fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
+
+    .lang-switcher{position:fixed;top:22px;left:48px;z-index:600;display:flex;gap:6px;align-items:center}
+    .lang-flag{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);transition:all 0.18s;line-height:1}
+    .lang-flag:hover{border-color:white;background:rgba(255,255,255,0.25)}
+    .lang-flag.active{border-color:white;background:rgba(255,255,255,0.35);box-shadow:0 0 0 2px rgba(255,255,255,0.5)}
+
+    nav{position:fixed;top:0;right:0;z-index:500;padding:20px 48px;background:transparent}
+    .nav-links{display:flex;gap:22px;list-style:none;align-items:center}
+    .nav-links a{text-decoration:none;font-size:.87rem;font-weight:500;color:white;opacity:.82;text-shadow:0 1px 8px rgba(0,0,0,.6);transition:opacity .2s}
+    .nav-links a:hover,.nav-links a.active{opacity:1;font-weight:700}
+
+    .site-hero{display:grid;grid-template-columns:1fr 1fr;min-height:44vh;
+      background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue-bright) 60%,#29B6F6 100%);
+      position:relative;overflow:hidden}
+    .site-hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:80px;background:var(--off-white);clip-path:ellipse(55% 100% at 50% 100%)}
+    .hero-img-half{position:relative;overflow:hidden;display:flex;align-items:stretch}
+    .hero-img-half img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;opacity:.9}
+    .hero-text-half{display:flex;flex-direction:column;justify-content:center;padding:70px 56px 90px 48px;position:relative;z-index:1}
+    .hero-appname{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,5.5vw,5.5rem);font-weight:700;color:white;letter-spacing:-2px;line-height:1;margin-bottom:16px}
+    .hero-page-title{font-family:'DM Serif Display',serif;font-size:clamp(1.2rem,2.2vw,1.8rem);color:rgba(255,255,255,.88);line-height:1.3;margin-bottom:10px}
+    .hero-page-title em{color:var(--accent);font-style:italic}
+    .hero-page-sub{color:rgba(255,255,255,.7);font-size:.93rem;line-height:1.7;font-weight:300;max-width:400px}
+
+    footer{background:var(--text);border-top:1px solid rgba(255,255,255,.06);padding:48px;text-align:center}
+    .foot-logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px}
+    .foot-logo-img{width:34px;height:34px;object-fit:contain;border-radius:8px}
+    .foot-logo-name{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:white}
+    .footer-sub{color:rgba(255,255,255,.4);font-size:.85rem;margin-bottom:20px}
+    .footer-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+    .footer-links a{color:rgba(255,255,255,.5);font-size:.85rem;text-decoration:none;transition:color .2s}
+    .footer-links a:hover{color:white}
+
+    .content{max-width:960px;margin:0 auto;padding:64px 48px 80px}
+    .contact-hero-card{
+      background:linear-gradient(135deg,var(--blue-deep),var(--blue-mid));
+      border-radius:var(--radius);padding:56px 48px;margin-bottom:32px;text-align:center;
+    }
+    .contact-hero-card h2{font-family:'DM Serif Display',serif;font-size:clamp(1.6rem,2.8vw,2.2rem);color:white;margin-bottom:14px}
+    .contact-hero-card p{color:rgba(255,255,255,.75);font-size:1rem;line-height:1.75;font-weight:300;max-width:520px;margin:0 auto 36px}
+    .mail-btn{
+      display:inline-flex;align-items:center;gap:10px;
+      background:white;color:var(--blue-mid);
+      padding:16px 36px;border-radius:100px;
+      font-weight:700;font-size:1rem;text-decoration:none;
+      transition:transform .15s,box-shadow .15s;
+      box-shadow:0 4px 20px rgba(0,0,0,.15);
+    }
+    .mail-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.2)}
+
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
+    .info-card{background:white;border-radius:var(--radius);padding:28px 24px;border:1px solid rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;text-align:center}
+    .info-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(21,101,192,.1)}
+    .info-card-icon{font-size:1.8rem;margin-bottom:12px}
+    .info-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:var(--text)}
+    .info-card p{color:var(--text-muted);font-size:.82rem;line-height:1.6;font-weight:300}
+
+    @media(max-width:768px){
+      nav{padding:14px 18px}.nav-links{gap:12px}.nav-links a{font-size:.74rem}
+      .lang-switcher{left:18px;top:14px}.lang-flag{width:26px;height:26px;font-size:1rem}
+      .site-hero{grid-template-columns:1fr}.hero-img-half{height:180px}
+      .hero-text-half{padding:32px 24px 80px}.hero-appname{font-size:2.8rem}
+      .content{padding:48px 24px}.contact-hero-card{padding:40px 24px}
+      .info-grid{grid-template-columns:1fr}
+      footer{padding:40px 24px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lang-switcher">
+    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
+    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
+    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
+    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
+    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
+    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+  </div>
+
+  <nav>
+    <ul class="nav-links">
+      <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+      <li><a href="demo.html" data-i18n="nav_demo">Demo</a></li>
+      <li><a href="premium.html" data-i18n="nav_premium">Premium</a></li>
+      <li><a href="info.html" data-i18n="nav_info">Info</a></li>
+      <li><a href="privacy.html" data-i18n="nav_privacy">Privacy</a></li>
+      <li><a href="contatti.html" class="active" data-i18n="nav_contact">Contatti</a></li>
+    </ul>
+  </nav>
+
+  <div class="site-hero">
+    <div class="hero-img-half"><img src="logo.png" alt="Warranto"></div>
+    <div class="hero-text-half">
+      <div class="hero-appname">Warranto</div>
+      <div class="hero-page-title" data-i18n="ph_title"><em>Scrivici</em> pure</div>
+      <p class="hero-page-sub" data-i18n="ph_sub">Siamo qui per aiutarti. Rispondiamo entro 24–48 ore.</p>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="contact-hero-card fade-in">
+      <h2 data-i18n="ct_title">Hai domande? Scrivici.</h2>
+      <p data-i18n="ct_body">Che si tratti di un dubbio sull'app, di un suggerimento per migliorarla o di una segnalazione di bug — leggiamo ogni messaggio e rispondiamo personalmente. Siamo uno studio piccolo e ci teniamo a ogni feedback.</p>
+      <a href="mailto:domixia.dev@gmail.com" class="mail-btn">✉️ domixia.dev@gmail.com</a>
+    </div>
+
+    <div class="info-grid fade-in">
+      <div class="info-card">
+        <div class="info-card-icon">💬</div>
+        <h3 data-i18n="ic1_t">Supporto</h3>
+        <p data-i18n="ic1_p">Problemi con l'app, garanzie che non si sincronizzano, notifiche che non arrivano. Ti aiutiamo a risolvere.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">💡</div>
+        <h3 data-i18n="ic2_t">Suggerimenti</h3>
+        <p data-i18n="ic2_p">Hai un'idea per una funzione nuova? Ci fa piacere sapere cosa vorresti vedere nelle prossime versioni.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🤝</div>
+        <h3 data-i18n="ic3_t">Partnership</h3>
+        <p data-i18n="ic3_p">Sei un rivenditore, un'azienda o un creator? Scrivici per qualsiasi proposta di collaborazione.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="foot-logo-row">
+      <img src="logo.png" alt="Warranto" class="foot-logo-img">
+      <span class="foot-logo-name">Warranto</span>
+    </div>
+    <p class="footer-sub">Domixia · 2026</p>
+    <div class="footer-links">
+      <a href="index.html" data-i18n="nav_home">Home</a>
+      <a href="demo.html" data-i18n="nav_demo">Demo</a>
+      <a href="premium.html" data-i18n="nav_premium">Premium</a>
+      <a href="info.html" data-i18n="nav_info">Info</a>
+      <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
+      <a href="https://play.google.com/store/apps/details?id=com.warranto.app">Play Store</a>
+      <a href="contatti.html" data-i18n="nav_contact">Contatti</a>
+    </div>
+  </footer>
+
+<script>
+const T={
+it:{
+  nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contatti',
+  ph_title:'<em>Scrivici</em> pure',ph_sub:'Siamo qui per aiutarti. Rispondiamo entro 24–48 ore.',
+  ct_title:'Hai domande? Scrivici.',
+  ct_body:"Che si tratti di un dubbio sull'app, di un suggerimento per migliorarla o di una segnalazione di bug — leggiamo ogni messaggio e rispondiamo personalmente. Siamo uno studio piccolo e ci teniamo a ogni feedback.",
+  ic1_t:'Supporto',ic1_p:"Problemi con l'app, garanzie che non si sincronizzano, notifiche che non arrivano. Ti aiutiamo a risolvere.",
+  ic2_t:'Suggerimenti',ic2_p:"Hai un'idea per una funzione nuova? Ci fa piacere sapere cosa vorresti vedere nelle prossime versioni.",
+  ic3_t:'Partnership',ic3_p:"Sei un rivenditore, un'azienda o un creator? Scrivici per qualsiasi proposta di collaborazione.",
+},
+en:{
+  nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contact',
+  ph_title:'<em>Get in touch</em>',ph_sub:"We're here to help. We reply within 24–48 hours.",
+  ct_title:'Any questions? Write to us.',
+  ct_body:"Whether it's a question about the app, a suggestion to improve it, or a bug report — we read every message and reply personally. We're a small studio and we care about every piece of feedback.",
+  ic1_t:'Support',ic1_p:"Issues with the app, warranties not syncing, notifications not arriving. We'll help you sort it out.",
+  ic2_t:'Suggestions',ic2_p:"Got an idea for a new feature? We'd love to know what you'd like to see in future versions.",
+  ic3_t:'Partnership',ic3_p:"Are you a retailer, a company or a creator? Write to us for any collaboration proposal.",
+},
+fr:{
+  nav_home:'Accueil',nav_demo:'Démo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Confidentialité',nav_contact:'Contact',
+  ph_title:'<em>Écrivez-nous</em>',ph_sub:'Nous sommes là pour vous aider. Nous répondons sous 24–48 heures.',
+  ct_title:'Des questions ? Écrivez-nous.',
+  ct_body:"Qu'il s'agisse d'une question sur l'app, d'une suggestion pour l'améliorer ou d'un signalement de bug — nous lisons chaque message et répondons personnellement. Nous sommes un petit studio et tenons à chaque retour.",
+  ic1_t:'Support',ic1_p:"Problèmes avec l'app, garanties qui ne se synchronisent pas, notifications absentes. Nous vous aidons à résoudre.",
+  ic2_t:'Suggestions',ic2_p:"Vous avez une idée de nouvelle fonctionnalité ? Dites-nous ce que vous aimeriez voir dans les prochaines versions.",
+  ic3_t:'Partenariat',ic3_p:"Vous êtes revendeur, entreprise ou créateur ? Écrivez-nous pour toute proposition de collaboration.",
+},
+es:{
+  nav_home:'Inicio',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidad',nav_contact:'Contacto',
+  ph_title:'<em>Contáctanos</em>',ph_sub:'Estamos aquí para ayudarte. Respondemos en 24–48 horas.',
+  ct_title:'¿Tienes preguntas? Escríbenos.',
+  ct_body:"Ya sea una duda sobre la app, una sugerencia para mejorarla o un reporte de bug — leemos cada mensaje y respondemos personalmente. Somos un estudio pequeño y nos importa cada comentario.",
+  ic1_t:'Soporte',ic1_p:"Problemas con la app, garantías que no sincronizan, notificaciones que no llegan. Te ayudamos a resolverlo.",
+  ic2_t:'Sugerencias',ic2_p:"¿Tienes una idea para una nueva función? Nos encanta saber qué te gustaría ver en las próximas versiones.",
+  ic3_t:'Colaboración',ic3_p:"¿Eres distribuidor, empresa o creador? Escríbenos para cualquier propuesta de colaboración.",
+},
+de:{
+  nav_home:'Startseite',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Datenschutz',nav_contact:'Kontakt',
+  ph_title:'<em>Schreiben Sie uns</em>',ph_sub:'Wir sind für Sie da. Wir antworten innerhalb von 24–48 Stunden.',
+  ct_title:'Haben Sie Fragen? Schreiben Sie uns.',
+  ct_body:"Ob es eine Frage zur App, ein Verbesserungsvorschlag oder eine Fehlermeldung ist — wir lesen jede Nachricht und antworten persönlich. Wir sind ein kleines Studio und schätzen jedes Feedback.",
+  ic1_t:'Support',ic1_p:"Probleme mit der App, Garantien die nicht synchronisieren, fehlende Benachrichtigungen. Wir helfen Ihnen.",
+  ic2_t:'Vorschläge',ic2_p:"Haben Sie eine Idee für eine neue Funktion? Wir freuen uns zu hören, was Sie in zukünftigen Versionen sehen möchten.",
+  ic3_t:'Partnerschaft',ic3_p:"Sind Sie Händler, Unternehmen oder Creator? Schreiben Sie uns für Kooperationsvorschläge.",
+},
+pt:{
+  nav_home:'Início',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidade',nav_contact:'Contato',
+  ph_title:'<em>Fale conosco</em>',ph_sub:'Estamos aqui para ajudar. Respondemos em 24–48 horas.',
+  ct_title:'Tem dúvidas? Escreva-nos.',
+  ct_body:"Seja uma dúvida sobre o app, uma sugestão para melhorá-lo ou um relato de bug — lemos cada mensagem e respondemos pessoalmente. Somos um estúdio pequeno e valorizamos cada feedback.",
+  ic1_t:'Suporte',ic1_p:"Problemas com o app, garantias que não sincronizam, notificações que não chegam. Ajudamos você a resolver.",
+  ic2_t:'Sugestões',ic2_p:"Tem uma ideia para uma nova função? Adoramos saber o que você gostaria de ver nas próximas versões.",
+  ic3_t:'Parceria',ic3_p:"É revendedor, empresa ou criador? Escreva-nos para qualquer proposta de colaboração.",
+},
+};
+
+let lang;
+try { lang = localStorage.getItem('warranto_lang') || (navigator.language||'it').slice(0,2); } catch(e) { lang='it'; }
+if (!T[lang]) lang='it';
+
+function setLang(l){
+  lang=l;
+  try { localStorage.setItem('warranto_lang',l); } catch(e){}
+  document.querySelectorAll('.lang-flag').forEach(b=>b.classList.toggle('active',b.getAttribute('data-lang')===l));
+  const t=T[l]||T.en;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(t[k]!==undefined) el.innerHTML=t[k];
+  });
+}
+
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});
+},{threshold:0.15});
+document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
+
+setLang(lang);
+</script>
+</body>
+</html>
