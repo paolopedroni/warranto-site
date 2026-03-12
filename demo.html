@@ -178,31 +178,23 @@
     .hint-telefono {
       font-size: 14px; margin-bottom: 12px; opacity: 0.88; text-align: center;
     }
-    /* Phone mockup — same style as index */
-    .phone-outer { position: relative; width: 300px; height: 635px; }
+    /* Cornice celeste stile index — senza bordo nero */
+    .phone-outer {
+      width: 300px; height: 620px;
+      border-radius: 45px; padding: 12px;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+      animation: galleggia 4s ease-in-out infinite;
+      position: relative;
+    }
     .phone-shell {
-      position: absolute; top: 16px; left: 8px;
-      width: 284px; height: 603px; border-radius: 30px; overflow: hidden;
-      background: var(--app-surface); z-index: 1;
+      width: 100%; height: 100%;
+      border-radius: 35px; overflow: hidden;
+      background: var(--app-surface);
+      position: relative;
     }
-    .phone-frame {
-      position: absolute; inset: 0; border-radius: 40px;
-      box-shadow: 0 0 0 8px #1a1c2e, 0 0 0 10px #252843, 0 0 0 11px rgba(255,255,255,.05), 0 32px 70px rgba(0,0,0,.75);
-      pointer-events: none; z-index: 50;
-      animation: galleggia 4s ease-in-out infinite;
-    }
-    .phone-notch {
-      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      width: 82px; height: 20px; background: #1a1c2e;
-      border-radius: 0 0 13px 13px; z-index: 60; pointer-events: none;
-      animation: galleggia 4s ease-in-out infinite;
-    }
-    .phone-btn { position: absolute; width: 3px; border-radius: 2px; background: #252843; z-index: 60; }
-    @keyframes galleggia { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
-    .phone-btn-anim {
-      animation: galleggiabtn 4s ease-in-out infinite;
-    }
-    @keyframes galleggiabtn { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+    /* phone-frame, phone-notch, phone-btn rimossi — cornice pulita come index */
 
     /* App screen internals */
     .app-screen { font-family: 'Roboto', Arial, sans-serif; }
@@ -340,14 +332,54 @@
     .footer-links a:hover { color: white; }
 
     @media(max-width:900px){
-      .hero-container { flex-direction: column; padding: 120px 30px 160px; align-items: center; }
-      .hero-left { padding-right: 0; margin-bottom: 40px; max-width: 100%; }
+      /* Hero: telefono in cima, testo in basso */
+      .hero-container {
+        flex-direction: column;
+        padding: 90px 24px 160px;
+        align-items: center;
+        gap: 28px;
+      }
+      /* Telefono — primo elemento visivo */
+      .hero-right {
+        order: 1;
+        width: 100%;
+        align-items: center;
+        flex: none;
+      }
+      .hint-telefono { font-size: 13px; margin-bottom: 10px; }
+      .phone-outer { width: 260px; height: 540px; border-radius: 38px; }
+      .phone-shell { border-radius: 28px; }
+      /* Testo — secondo elemento, sotto il telefono */
+      .hero-left {
+        order: 2;
+        padding-right: 0;
+        max-width: 100%;
+        width: 100%;
+        align-items: center;
+        text-align: center;
+      }
+      .demo-main-title { text-align: center; font-size: clamp(1.5rem, 5vw, 2.2rem); }
+      .demo-main-sub { text-align: center; font-size: 1rem; margin-left: auto; margin-right: auto; }
+      .demo-disclaimer { justify-content: center; text-align: center; }
+      #sdots-row { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .btn-download-demo { width: 100%; justify-content: center; margin-bottom: 0; }
+      .cc-card { max-width: 100%; }
+      .cc-feats { max-width: 100%; }
       .lang-switcher { left: 18px; top: 14px; }
       .lang-flag { width: 26px; height: 26px; font-size: 1rem; }
       nav { padding: 14px 18px; }
       .nav-links { gap: 12px; }
       .nav-links a { font-size: .74rem; }
       footer { padding: 40px 24px; }
+    }
+    @media(max-width:480px){
+      .hero-container { padding: 80px 14px 130px; gap: 20px; }
+      .phone-outer { width: 230px; height: 478px; border-radius: 34px; }
+      .phone-shell { border-radius: 24px; }
+      .demo-main-title { font-size: 1.4rem; }
+      .demo-main-sub { font-size: .92rem; }
+      .nav-links a { font-size: .68rem; }
+      .nav-links { gap: 8px; }
     }
   </style>
 </head>
@@ -385,7 +417,7 @@
       <p class="demo-main-sub" id="demo-sub">Naviga tra le schermate dell'app per scoprire come funziona e valutare se fa al caso tuo. Tocca le card, cambia sezione, prova l'interfaccia.</p>
 
       <!-- dots nav + pulsante affiancati -->
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; width:100%;">
+      <div id="sdots-row" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; width:100%;">
         <div class="screen-nav" id="sdots">
           <button class="sn-dot active" id="sd-home" onclick="goScreen('home')"></button>
           <button class="sn-dot" id="sd-detail" onclick="goScreen('detail');openDetail(0)"></button>
@@ -730,11 +762,6 @@
           </div>
 
         </div><!-- /phone-shell -->
-        <div class="phone-frame"></div>
-        <div class="phone-notch"></div>
-        <div class="phone-btn phone-btn-anim" style="right:-3px;top:95px;height:48px;border-radius:0 2px 2px 0"></div>
-        <div class="phone-btn phone-btn-anim" style="right:-3px;top:158px;height:32px;border-radius:0 2px 2px 0"></div>
-        <div class="phone-btn phone-btn-anim" style="left:-3px;top:120px;height:42px;border-radius:2px 0 0 2px"></div>
       </div>
     </div>
   </div>
