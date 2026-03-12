@@ -176,10 +176,44 @@
     .t-tab-icon { font-size: 18px; margin-bottom: 2px; }
 
     @media(max-width:900px){
-      .hero-container { flex-direction: column; padding: 120px 30px 160px; }
-      .hero-left { padding-right: 0; margin-bottom: 40px; }
-      .titolo-warranto { font-size: 4rem; }
-      .slogan { font-size: 2.5rem; }
+      .hero-container {
+        flex-direction: column;
+        padding: 100px 24px 160px;
+        align-items: center;
+      }
+      .hero-left {
+        padding-right: 0;
+        width: 100%;
+        align-items: center;
+        text-align: center;
+        order: 2;
+      }
+      .brand-group {
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .logo-enorme { width: 80px; height: 80px; border-radius: 20px; }
+      .titolo-warranto { font-size: 3.8rem; letter-spacing: -1px; }
+      .badges { justify-content: center; }
+      .slogan { font-size: 2rem; text-align: center; }
+      .descrizione { font-size: 1rem; text-align: center; margin-left: auto; margin-right: auto; }
+      .pulsanti { justify-content: center; flex-wrap: wrap; }
+      .hero-right {
+        order: 1;
+        margin-bottom: 36px;
+        width: 100%;
+        align-items: center;
+      }
+      .mockup-telefono { width: 240px; height: 480px; border-radius: 36px; }
+      .schermo { border-radius: 28px; }
+    }
+    @media(max-width:480px){
+      .hero-container { padding: 90px 16px 140px; }
+      .titolo-warranto { font-size: 2.8rem; }
+      .slogan { font-size: 1.6rem; }
+      .btn { padding: 13px 22px; font-size: 14px; }
+      .mockup-telefono { width: 210px; height: 420px; }
     }
   </style>
 </head>
