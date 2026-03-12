@@ -16,9 +16,13 @@
     }
     html{scroll-behavior:smooth}
     body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);overflow-x:hidden}
-    .lang-switcher{position:fixed;top:22px;left:48px;z-index:600;display:flex;gap:6px;align-items:center}
-    .lang-flag{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);transition:all 0.18s;line-height:1}
-    .lang-flag:hover{border-color:white;background:rgba(255,255,255,0.25)}
+    .lang-switcher{position:fixed;top:16px;left:16px;z-index:600}
+    .lang-btn{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.2);transition:all 0.18s;line-height:1;user-select:none}
+    .lang-btn:hover{background:rgba(255,255,255,0.35)}
+    .lang-dropdown{display:none;flex-direction:column;gap:6px;margin-top:8px;background:rgba(20,40,100,0.88);backdrop-filter:blur(10px);border-radius:12px;padding:8px;border:1px solid rgba(255,255,255,0.2)}
+    .lang-dropdown.open{display:flex}
+    .lang-flag{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);transition:all 0.18s;line-height:1;user-select:none}
+    .lang-flag:hover{border-color:white;background:rgba(255,255,255,0.3)}
     .lang-flag.active{border-color:white;background:rgba(255,255,255,0.35);box-shadow:0 0 0 2px rgba(255,255,255,0.5)}
     nav{position:fixed;top:0;right:0;z-index:500;padding:20px 48px;background:transparent}
     .nav-links{display:flex;gap:22px;list-style:none;align-items:center}
@@ -59,7 +63,7 @@
     .highlight-box strong{color:var(--blue-mid)}
     @media(max-width:768px){
       nav{padding:14px 18px}.nav-links{gap:12px}.nav-links a{font-size:.74rem}
-      .lang-switcher{left:18px;top:14px}.lang-flag{width:26px;height:26px;font-size:1rem}
+      /* lang-switcher già ottimizzato per mobile */
       .site-hero{grid-template-columns:1fr}.hero-img-half{height:180px}
       .hero-text-half{padding:32px 24px 80px}.hero-appname{font-size:2.8rem}
       .content{padding:40px 20px}.priv-section{padding:24px 20px}
@@ -69,13 +73,17 @@
 </head>
 <body>
 
+<!-- LANGUAGE SWITCHER — top left, dropdown -->
 <div class="lang-switcher">
-  <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
-  <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
-  <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
-  <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
-  <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
-  <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+  <div class="lang-btn" id="langToggle" onclick="toggleLangMenu()">🇮🇹</div>
+  <div class="lang-dropdown" id="langDropdown">
+    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
+    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
+    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
+    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
+    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
+    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+  </div>
 </div>
 
 <nav>
@@ -93,14 +101,14 @@
   <div class="hero-img-half"><img src="logo.png" alt="Warranto"></div>
   <div class="hero-text-half">
     <div class="hero-appname">Warranto</div>
-    <div class="hero-page-title" data-i18n="ph_title">Privacy <em>Policy</em></div>
-    <p class="hero-page-sub" data-i18n="ph_sub">Come Warranto gestisce i tuoi dati. Versione breve: restano sul tuo telefono.</p>
+    <div class="hero-page-title" data-ph="ph_title">Privacy <em>Policy</em></div>
+    <p class="hero-page-sub" data-ph="ph_sub">Come Warranto gestisce i tuoi dati. Versione breve: restano sul tuo telefono.</p>
   </div>
 </div>
 
 <!-- ══ ITALIANO ══ -->
 <div id="content-it" class="content">
-  <p class="priv-updated">Ultimo aggiornamento: Marzo 2026 · Valida per: Warranto v1.x · Sviluppatore: Domixia (<a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a>)</p>
+  <p class="priv-updated">Ultimo aggiornamento: Marzo 2026 · Valida per: Warranto v1.x · Sviluppatore: Domixia (<a href="mailto:privacy@domixia.com">privacy@domixia.com</a>)</p>
   <div class="highlight-box"><strong>In sintesi:</strong> Warranto salva tutti i tuoi dati <strong>esclusivamente sul tuo dispositivo</strong>. Non raccogliamo, non vendiamo e non condividiamo informazioni personali. Il backup cloud è facoltativo, cifrato AES-256 con una chiave che deriva dal tuo UID Google — nemmeno noi possiamo leggerlo.</div>
   <div class="sum-pills">
     <span class="sum-pill">📱 Dati locali</span><span class="sum-pill">🔐 Backup AES-256</span><span class="sum-pill">🚫 Nessun tracking</span><span class="sum-pill">📵 Nessuna pubblicità</span><span class="sum-pill">📶 Funziona offline</span><span class="sum-pill">🗑️ Cancellazione completa</span>
@@ -143,13 +151,13 @@
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">8</span>Dati dei minori</h2>
-    <p>Warranto non è rivolta a minori di 13 anni. Non raccogliamo consapevolmente dati personali di minori. Se sei il genitore o tutore di un minore che ha utilizzato l'app, contattaci a <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> per richiedere la cancellazione dei dati.</p>
+    <p>Warranto non è rivolta a minori di 13 anni. Non raccogliamo consapevolmente dati personali di minori. Se sei il genitore o tutore di un minore che ha utilizzato l'app, contattaci a <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> per richiedere la cancellazione dei dati.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">9</span>Eliminazione dei dati</h2>
     <p><strong>Dati locali:</strong> disinstallare l'app elimina automaticamente tutti i dati salvati sul dispositivo.</p>
     <p><strong>Backup cloud:</strong> per eliminare il backup cloud, utilizza la funzione "Elimina backup cloud" nelle impostazioni dell'app prima di disinstallare. In alternativa, puoi eliminare manualmente i dati dal tuo account Firebase.</p>
-    <p><strong>Richiesta di cancellazione:</strong> per richiedere la cancellazione di qualsiasi dato associato al tuo account, scrivi a <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> indicando il tuo indirizzo email Google.</p>
+    <p><strong>Richiesta di cancellazione:</strong> per richiedere la cancellazione di qualsiasi dato associato al tuo account, scrivi a <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> indicando il tuo indirizzo email Google.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">10</span>Modifiche alla Privacy Policy</h2>
@@ -158,13 +166,13 @@
   <div class="priv-section">
     <h2><span class="sec-num">11</span>Contatti</h2>
     <p>Per domande, richieste relative alla privacy o segnalazioni:</p>
-    <p><strong>Sviluppatore:</strong> Domixia<br><strong>Email:</strong> <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Anno:</strong> 2026</p>
+    <p><strong>Sviluppatore:</strong> Domixia<br><strong>Email:</strong> <a href="mailto:privacy@domixia.com">privacy@domixia.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Anno:</strong> 2026</p>
   </div>
 </div>
 
 <!-- ══ ENGLISH ══ -->
 <div id="content-en" class="content">
-  <p class="priv-updated">Last updated: March 2026 · Applies to: Warranto v1.x · Developer: Domixia (<a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a>)</p>
+  <p class="priv-updated">Last updated: March 2026 · Applies to: Warranto v1.x · Developer: Domixia (<a href="mailto:privacy@domixia.com">privacy@domixia.com</a>)</p>
   <div class="highlight-box"><strong>Summary:</strong> Warranto saves all your data <strong>exclusively on your device</strong>. We do not collect, sell or share personal information. Cloud backup is optional, AES-256 encrypted with a key derived from your Google UID — even we cannot read it.</div>
   <div class="sum-pills">
     <span class="sum-pill">📱 Local data</span><span class="sum-pill">🔐 AES-256 backup</span><span class="sum-pill">🚫 No tracking</span><span class="sum-pill">📵 No ads</span><span class="sum-pill">📶 Works offline</span><span class="sum-pill">🗑️ Full deletion</span>
@@ -207,13 +215,13 @@
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">8</span>Children's data</h2>
-    <p>Warranto is not directed at children under 13. We do not knowingly collect personal data from minors. If you are the parent or guardian of a minor who has used the app, contact us at <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> to request data deletion.</p>
+    <p>Warranto is not directed at children under 13. We do not knowingly collect personal data from minors. If you are the parent or guardian of a minor who has used the app, contact us at <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> to request data deletion.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">9</span>Data deletion</h2>
     <p><strong>Local data:</strong> uninstalling the app automatically deletes all data saved on the device.</p>
     <p><strong>Cloud backup:</strong> to delete the cloud backup, use the "Delete cloud backup" function in the app settings before uninstalling. Alternatively, you can manually delete the data from your Firebase account.</p>
-    <p><strong>Deletion request:</strong> to request deletion of any data associated with your account, write to <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> indicating your Google email address.</p>
+    <p><strong>Deletion request:</strong> to request deletion of any data associated with your account, write to <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> indicating your Google email address.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">10</span>Changes to this Privacy Policy</h2>
@@ -222,13 +230,13 @@
   <div class="priv-section">
     <h2><span class="sec-num">11</span>Contact</h2>
     <p>For questions, privacy-related requests or reports:</p>
-    <p><strong>Developer:</strong> Domixia<br><strong>Email:</strong> <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Year:</strong> 2026</p>
+    <p><strong>Developer:</strong> Domixia<br><strong>Email:</strong> <a href="mailto:privacy@domixia.com">privacy@domixia.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Year:</strong> 2026</p>
   </div>
 </div>
 
 <!-- ══ FRANÇAIS ══ -->
 <div id="content-fr" class="content">
-  <p class="priv-updated">Dernière mise à jour : Mars 2026 · Applicable à : Warranto v1.x · Développeur : Domixia (<a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a>)</p>
+  <p class="priv-updated">Dernière mise à jour : Mars 2026 · Applicable à : Warranto v1.x · Développeur : Domixia (<a href="mailto:privacy@domixia.com">privacy@domixia.com</a>)</p>
   <div class="highlight-box"><strong>En résumé :</strong> Warranto enregistre toutes vos données <strong>exclusivement sur votre appareil</strong>. Nous ne collectons, ne vendons et ne partageons pas d'informations personnelles. La sauvegarde cloud est facultative, chiffrée AES-256 avec une clé dérivée de votre UID Google — même nous ne pouvons pas la lire.</div>
   <div class="sum-pills">
     <span class="sum-pill">📱 Données locales</span><span class="sum-pill">🔐 Backup AES-256</span><span class="sum-pill">🚫 Aucun tracking</span><span class="sum-pill">📵 Aucune publicité</span><span class="sum-pill">📶 Fonctionne hors ligne</span><span class="sum-pill">🗑️ Suppression complète</span>
@@ -271,13 +279,13 @@
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">8</span>Données des mineurs</h2>
-    <p>Warranto n'est pas destinée aux enfants de moins de 13 ans. Nous ne collectons pas sciemment de données personnelles de mineurs. Si vous êtes le parent ou le tuteur d'un mineur ayant utilisé l'application, contactez-nous à <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> pour demander la suppression des données.</p>
+    <p>Warranto n'est pas destinée aux enfants de moins de 13 ans. Nous ne collectons pas sciemment de données personnelles de mineurs. Si vous êtes le parent ou le tuteur d'un mineur ayant utilisé l'application, contactez-nous à <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> pour demander la suppression des données.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">9</span>Suppression des données</h2>
     <p><strong>Données locales :</strong> désinstaller l'application supprime automatiquement toutes les données sauvegardées sur l'appareil.</p>
     <p><strong>Sauvegarde cloud :</strong> pour supprimer la sauvegarde cloud, utilisez la fonction "Supprimer la sauvegarde cloud" dans les paramètres de l'application avant de désinstaller. Vous pouvez également supprimer manuellement les données depuis votre compte Firebase.</p>
-    <p><strong>Demande de suppression :</strong> pour demander la suppression de toute donnée associée à votre compte, écrivez à <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> en indiquant votre adresse e-mail Google.</p>
+    <p><strong>Demande de suppression :</strong> pour demander la suppression de toute donnée associée à votre compte, écrivez à <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> en indiquant votre adresse e-mail Google.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">10</span>Modifications de cette Politique de confidentialité</h2>
@@ -286,13 +294,13 @@
   <div class="priv-section">
     <h2><span class="sec-num">11</span>Contact</h2>
     <p>Pour toute question, demande liée à la confidentialité ou signalement :</p>
-    <p><strong>Développeur :</strong> Domixia<br><strong>E-mail :</strong> <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a><br><strong>App :</strong> Warranto (com.warranto.app)<br><strong>Année :</strong> 2026</p>
+    <p><strong>Développeur :</strong> Domixia<br><strong>E-mail :</strong> <a href="mailto:privacy@domixia.com">privacy@domixia.com</a><br><strong>App :</strong> Warranto (com.warranto.app)<br><strong>Année :</strong> 2026</p>
   </div>
 </div>
 
 <!-- ══ ESPAÑOL ══ -->
 <div id="content-es" class="content">
-  <p class="priv-updated">Última actualización: Marzo 2026 · Válida para: Warranto v1.x · Desarrollador: Domixia (<a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a>)</p>
+  <p class="priv-updated">Última actualización: Marzo 2026 · Válida para: Warranto v1.x · Desarrollador: Domixia (<a href="mailto:privacy@domixia.com">privacy@domixia.com</a>)</p>
   <div class="highlight-box"><strong>En resumen:</strong> Warranto guarda todos tus datos <strong>exclusivamente en tu dispositivo</strong>. No recopilamos, vendemos ni compartimos información personal. La copia de seguridad en la nube es opcional, cifrada con AES-256 con una clave derivada de tu UID de Google — ni siquiera nosotros podemos leerla.</div>
   <div class="sum-pills">
     <span class="sum-pill">📱 Datos locales</span><span class="sum-pill">🔐 Backup AES-256</span><span class="sum-pill">🚫 Sin tracking</span><span class="sum-pill">📵 Sin publicidad</span><span class="sum-pill">📶 Funciona sin conexión</span><span class="sum-pill">🗑️ Eliminación completa</span>
@@ -335,13 +343,13 @@
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">8</span>Datos de menores</h2>
-    <p>Warranto no está dirigida a menores de 13 años. No recopilamos conscientemente datos personales de menores. Si eres padre, madre o tutor de un menor que ha utilizado la app, contáctanos en <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> para solicitar la eliminación de datos.</p>
+    <p>Warranto no está dirigida a menores de 13 años. No recopilamos conscientemente datos personales de menores. Si eres padre, madre o tutor de un menor que ha utilizado la app, contáctanos en <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> para solicitar la eliminación de datos.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">9</span>Eliminación de datos</h2>
     <p><strong>Datos locales:</strong> desinstalar la app elimina automáticamente todos los datos guardados en el dispositivo.</p>
     <p><strong>Copia de seguridad en la nube:</strong> para eliminarla, usa la función "Eliminar copia de seguridad" en los ajustes de la app antes de desinstalar. También puedes eliminar manualmente los datos desde tu cuenta de Firebase.</p>
-    <p><strong>Solicitud de eliminación:</strong> para solicitar la eliminación de cualquier dato asociado a tu cuenta, escríbenos a <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> indicando tu dirección de correo electrónico de Google.</p>
+    <p><strong>Solicitud de eliminación:</strong> para solicitar la eliminación de cualquier dato asociado a tu cuenta, escríbenos a <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> indicando tu dirección de correo electrónico de Google.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">10</span>Cambios en esta Política de privacidad</h2>
@@ -350,13 +358,13 @@
   <div class="priv-section">
     <h2><span class="sec-num">11</span>Contacto</h2>
     <p>Para preguntas, solicitudes relacionadas con la privacidad o informes:</p>
-    <p><strong>Desarrollador:</strong> Domixia<br><strong>Email:</strong> <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Año:</strong> 2026</p>
+    <p><strong>Desarrollador:</strong> Domixia<br><strong>Email:</strong> <a href="mailto:privacy@domixia.com">privacy@domixia.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Año:</strong> 2026</p>
   </div>
 </div>
 
 <!-- ══ DEUTSCH ══ -->
 <div id="content-de" class="content">
-  <p class="priv-updated">Letzte Aktualisierung: März 2026 · Gilt für: Warranto v1.x · Entwickler: Domixia (<a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a>)</p>
+  <p class="priv-updated">Letzte Aktualisierung: März 2026 · Gilt für: Warranto v1.x · Entwickler: Domixia (<a href="mailto:privacy@domixia.com">privacy@domixia.com</a>)</p>
   <div class="highlight-box"><strong>Zusammenfassung:</strong> Warranto speichert alle Ihre Daten <strong>ausschließlich auf Ihrem Gerät</strong>. Wir sammeln, verkaufen oder teilen keine persönlichen Informationen. Das Cloud-Backup ist optional, mit AES-256 verschlüsselt und verwendet einen Schlüssel, der von Ihrer Google-UID abgeleitet wird — selbst wir können ihn nicht lesen.</div>
   <div class="sum-pills">
     <span class="sum-pill">📱 Lokale Daten</span><span class="sum-pill">🔐 AES-256-Backup</span><span class="sum-pill">🚫 Kein Tracking</span><span class="sum-pill">📵 Keine Werbung</span><span class="sum-pill">📶 Offline nutzbar</span><span class="sum-pill">🗑️ Vollständige Löschung</span>
@@ -399,13 +407,13 @@
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">8</span>Daten von Minderjährigen</h2>
-    <p>Warranto richtet sich nicht an Kinder unter 13 Jahren. Wir erheben wissentlich keine personenbezogenen Daten von Minderjährigen. Wenn Sie der Elternteil oder Vormund eines Minderjährigen sind, der die App genutzt hat, kontaktieren Sie uns unter <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a>, um die Datenlöschung zu beantragen.</p>
+    <p>Warranto richtet sich nicht an Kinder unter 13 Jahren. Wir erheben wissentlich keine personenbezogenen Daten von Minderjährigen. Wenn Sie der Elternteil oder Vormund eines Minderjährigen sind, der die App genutzt hat, kontaktieren Sie uns unter <a href="mailto:privacy@domixia.com">privacy@domixia.com</a>, um die Datenlöschung zu beantragen.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">9</span>Datenlöschung</h2>
     <p><strong>Lokale Daten:</strong> Die Deinstallation der App löscht automatisch alle auf dem Gerät gespeicherten Daten.</p>
     <p><strong>Cloud-Backup:</strong> Um das Cloud-Backup zu löschen, verwenden Sie die Funktion "Cloud-Backup löschen" in den App-Einstellungen vor der Deinstallation. Alternativ können Sie die Daten manuell aus Ihrem Firebase-Konto löschen.</p>
-    <p><strong>Löschungsantrag:</strong> Um die Löschung aller mit Ihrem Konto verknüpften Daten zu beantragen, schreiben Sie an <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> und geben Sie Ihre Google-E-Mail-Adresse an.</p>
+    <p><strong>Löschungsantrag:</strong> Um die Löschung aller mit Ihrem Konto verknüpften Daten zu beantragen, schreiben Sie an <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> und geben Sie Ihre Google-E-Mail-Adresse an.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">10</span>Änderungen dieser Datenschutzrichtlinie</h2>
@@ -414,13 +422,13 @@
   <div class="priv-section">
     <h2><span class="sec-num">11</span>Kontakt</h2>
     <p>Bei Fragen, datenschutzbezogenen Anfragen oder Meldungen:</p>
-    <p><strong>Entwickler:</strong> Domixia<br><strong>E-Mail:</strong> <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Jahr:</strong> 2026</p>
+    <p><strong>Entwickler:</strong> Domixia<br><strong>E-Mail:</strong> <a href="mailto:privacy@domixia.com">privacy@domixia.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Jahr:</strong> 2026</p>
   </div>
 </div>
 
 <!-- ══ PORTUGUÊS ══ -->
 <div id="content-pt" class="content">
-  <p class="priv-updated">Última atualização: Março 2026 · Válida para: Warranto v1.x · Desenvolvedor: Domixia (<a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a>)</p>
+  <p class="priv-updated">Última atualização: Março 2026 · Válida para: Warranto v1.x · Desenvolvedor: Domixia (<a href="mailto:privacy@domixia.com">privacy@domixia.com</a>)</p>
   <div class="highlight-box"><strong>Em resumo:</strong> O Warranto salva todos os seus dados <strong>exclusivamente no seu dispositivo</strong>. Não coletamos, vendemos ou compartilhamos informações pessoais. O backup na nuvem é opcional, criptografado com AES-256 com uma chave derivada do seu UID do Google — nem nós podemos lê-la.</div>
   <div class="sum-pills">
     <span class="sum-pill">📱 Dados locais</span><span class="sum-pill">🔐 Backup AES-256</span><span class="sum-pill">🚫 Sem tracking</span><span class="sum-pill">📵 Sem publicidade</span><span class="sum-pill">📶 Funciona offline</span><span class="sum-pill">🗑️ Exclusão completa</span>
@@ -463,13 +471,13 @@
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">8</span>Dados de menores</h2>
-    <p>O Warranto não é direcionado a menores de 13 anos. Não coletamos conscientemente dados pessoais de menores. Se você é pai, mãe ou responsável de um menor que usou o app, entre em contato em <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> para solicitar a exclusão dos dados.</p>
+    <p>O Warranto não é direcionado a menores de 13 anos. Não coletamos conscientemente dados pessoais de menores. Se você é pai, mãe ou responsável de um menor que usou o app, entre em contato em <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> para solicitar a exclusão dos dados.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">9</span>Exclusão de dados</h2>
     <p><strong>Dados locais:</strong> desinstalar o app exclui automaticamente todos os dados salvos no dispositivo.</p>
     <p><strong>Backup na nuvem:</strong> para excluir o backup, use a função "Excluir backup na nuvem" nas configurações do app antes de desinstalar. Você também pode excluir manualmente os dados da sua conta do Firebase.</p>
-    <p><strong>Solicitação de exclusão:</strong> para solicitar a exclusão de qualquer dado associado à sua conta, escreva para <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a> informando seu endereço de e-mail do Google.</p>
+    <p><strong>Solicitação de exclusão:</strong> para solicitar a exclusão de qualquer dado associado à sua conta, escreva para <a href="mailto:privacy@domixia.com">privacy@domixia.com</a> informando seu endereço de e-mail do Google.</p>
   </div>
   <div class="priv-section">
     <h2><span class="sec-num">10</span>Alterações nesta Política de privacidade</h2>
@@ -478,56 +486,86 @@
   <div class="priv-section">
     <h2><span class="sec-num">11</span>Contato</h2>
     <p>Para dúvidas, solicitações relacionadas à privacidade ou relatórios:</p>
-    <p><strong>Desenvolvedor:</strong> Domixia<br><strong>E-mail:</strong> <a href="mailto:domixia.dev@gmail.com">domixia.dev@gmail.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Ano:</strong> 2026</p>
+    <p><strong>Desenvolvedor:</strong> Domixia<br><strong>E-mail:</strong> <a href="mailto:privacy@domixia.com">privacy@domixia.com</a><br><strong>App:</strong> Warranto (com.warranto.app)<br><strong>Ano:</strong> 2026</p>
   </div>
 </div>
 
 <footer>
   <div class="foot-logo-row">
-    <img src="logo.png" alt="Warranto" class="foot-logo-img">
-    <span class="foot-logo-name">Warranto</span>
+    <img src="logo.png" alt="Logo" class="foot-logo-img">
+    <div class="foot-logo-name">Warranto</div>
   </div>
-  <p class="footer-sub">Domixia · 2026</p>
+  <p class="footer-sub">© 2026 Domixia. All rights reserved.</p>
   <div class="footer-links">
     <a href="index.html" data-i18n="nav_home">Home</a>
     <a href="demo.html" data-i18n="nav_demo">Demo</a>
     <a href="premium.html" data-i18n="nav_premium">Premium</a>
     <a href="info.html" data-i18n="nav_info">Info</a>
     <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
-    <a href="https://play.google.com/store/apps/details?id=com.warranto.app">Play Store</a>
     <a href="contatti.html" data-i18n="nav_contact">Contatti</a>
   </div>
 </footer>
 
 <script>
-const NAV={
-  it:{nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contatti',ph_title:'Privacy <em>Policy</em>',ph_sub:'Come Warranto gestisce i tuoi dati. Versione breve: restano sul tuo telefono.'},
-  en:{nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contact',ph_title:'Privacy <em>Policy</em>',ph_sub:'How Warranto handles your data. Short version: it stays on your phone.'},
-  fr:{nav_home:'Accueil',nav_demo:'Démo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Confidentialité',nav_contact:'Contact',ph_title:'Politique de <em>Confidentialité</em>',ph_sub:'Comment Warranto gère vos données. Version courte : elles restent sur votre téléphone.'},
-  es:{nav_home:'Inicio',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidad',nav_contact:'Contacto',ph_title:'Política de <em>Privacidad</em>',ph_sub:'Cómo Warranto gestiona tus datos. Versión corta: se quedan en tu teléfono.'},
-  de:{nav_home:'Startseite',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Datenschutz',nav_contact:'Kontakt',ph_title:'Daten<em>schutz</em>richtlinie',ph_sub:'Wie Warranto mit Ihren Daten umgeht. Kurze Version: Sie bleiben auf Ihrem Telefon.'},
-  pt:{nav_home:'Início',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidade',nav_contact:'Contato',ph_title:'Política de <em>Privacidade</em>',ph_sub:'Como o Warranto gerencia seus dados. Versão curta: ficam no seu telefone.'},
+const NAV_I18N = {
+  it:{nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contatti'},
+  en:{nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contact'},
+  fr:{nav_home:'Accueil',nav_demo:'Démo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Confidentialité',nav_contact:'Contact'},
+  es:{nav_home:'Inicio',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidad',nav_contact:'Contacto'},
+  de:{nav_home:'Startseite',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Datenschutz',nav_contact:'Kontakt'},
+  pt:{nav_home:'Início',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacidade',nav_contact:'Contacto'},
 };
+const PH_I18N = {
+  it:{ph_title:'Privacy <em>Policy</em>', ph_sub:'Come Warranto gestisce i tuoi dati. Versione breve: restano sul tuo telefono.'},
+  en:{ph_title:'Privacy <em>Policy</em>', ph_sub:'How Warranto handles your data. Short version: it stays on your phone.'},
+  fr:{ph_title:'Politique de <em>confidentialité</em>', ph_sub:'Comment Warranto gère vos données. En bref : elles restent sur votre téléphone.'},
+  es:{ph_title:'Política de <em>privacidad</em>', ph_sub:'Cómo Warranto gestiona tus datos. Versión corta: se quedan en tu teléfono.'},
+  de:{ph_title:'<em>Datenschutz</em>richtlinie', ph_sub:'Wie Warranto Ihre Daten verwaltet. Kurzversion: Sie bleiben auf Ihrem Telefon.'},
+  pt:{ph_title:'Política de <em>privacidade</em>', ph_sub:'Como o Warranto gere os seus dados. Versão curta: ficam no seu telemóvel.'},
+};
+
+const FLAGS = {it:'🇮🇹', en:'🇬🇧', es:'🇪🇸', de:'🇩🇪', fr:'🇫🇷', pt:'🇵🇹'};
 
 let lang;
 try { lang = localStorage.getItem('warranto_lang') || (navigator.language||'it').slice(0,2); } catch(e) { lang='it'; }
-if (!NAV[lang]) lang='it';
+if (!NAV_I18N[lang]) lang='it';
+
+function toggleLangMenu() {
+  document.getElementById('langDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  if (!document.querySelector('.lang-switcher').contains(e.target)) {
+    document.getElementById('langDropdown').classList.remove('open');
+  }
+});
 
 function setLang(l) {
   lang = l;
   try { localStorage.setItem('warranto_lang', l); } catch(e) {}
+  document.getElementById('langToggle').textContent = FLAGS[l] || '🌐';
+  document.getElementById('langDropdown').classList.remove('open');
   document.querySelectorAll('.lang-flag').forEach(b => b.classList.toggle('active', b.getAttribute('data-lang') === l));
-  const t = NAV[l];
+  // nav + footer links
+  const nt = NAV_I18N[l] || NAV_I18N.it;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
-    if (t[k] !== undefined) el.innerHTML = t[k];
+    if (nt[k] !== undefined) el.innerHTML = nt[k];
   });
+  // hero texts
+  const ph = PH_I18N[l] || PH_I18N.it;
+  document.querySelectorAll('[data-ph]').forEach(el => {
+    const k = el.getAttribute('data-ph');
+    if (ph[k] !== undefined) el.innerHTML = ph[k];
+  });
+  // show correct content block
   document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-  const block = document.getElementById('content-' + l);
+  const block = document.getElementById('content-' + l) || document.getElementById('content-en');
   if (block) block.classList.add('active');
 }
 
 setLang(lang);
+document.getElementById('langToggle').textContent = FLAGS[lang] || '🇮🇹';
 </script>
 </body>
 </html>
