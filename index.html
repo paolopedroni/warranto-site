@@ -32,31 +32,47 @@
       z-index: 1;
     }
 
-    /* ══ LANGUAGE SWITCHER — top left ══ */
+    /* ══ LANGUAGE SWITCHER — top left, dropdown ══ */
     .lang-switcher {
       position: fixed;
-      top: 22px;
-      left: 48px;
+      top: 16px; left: 16px;
       z-index: 600;
-      display: flex;
-      gap: 6px;
-      align-items: center;
     }
+    .lang-btn {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.5);
+      cursor: pointer; font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.2);
+      transition: all 0.18s; line-height: 1;
+      user-select: none;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.35); }
+    .lang-dropdown {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      background: rgba(20,40,100,0.88);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .lang-dropdown.open { display: flex; }
     .lang-flag {
       width: 30px; height: 30px;
       border-radius: 50%;
       border: 2px solid rgba(255,255,255,0.3);
-      cursor: pointer;
-      font-size: 1.15rem;
+      cursor: pointer; font-size: 1.1rem;
       display: flex; align-items: center; justify-content: center;
       background: rgba(255,255,255,0.12);
-      transition: all 0.18s;
-      text-decoration: none;
-      line-height: 1;
+      transition: all 0.18s; line-height: 1;
+      user-select: none;
     }
-    .lang-flag:hover { border-color: white; background: rgba(255,255,255,0.25); }
+    .lang-flag:hover { border-color: white; background: rgba(255,255,255,0.3); }
     .lang-flag.active { border-color: white; background: rgba(255,255,255,0.35); box-shadow: 0 0 0 2px rgba(255,255,255,0.5); }
-    @media(max-width:768px){ .lang-switcher { left: 18px; top: 14px; } .lang-flag { width: 26px; height: 26px; font-size: 1rem; } }
 
     /* ══ NAV — top right, no bar ══ */
     nav {
@@ -219,14 +235,17 @@
 </head>
 <body>
 
-  <!-- LANGUAGE SWITCHER — top left -->
-  <div class="lang-switcher" id="langSwitcher">
-    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
-    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
-    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
-    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
-    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
-    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+  <!-- LANGUAGE SWITCHER — top left, dropdown -->
+  <div class="lang-switcher">
+    <div class="lang-btn" id="langToggle" onclick="toggleLangMenu()">🇮🇹</div>
+    <div class="lang-dropdown" id="langDropdown">
+      <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
+      <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
+      <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
+      <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
+      <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
+      <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+    </div>
   </div>
 
   <nav>
@@ -434,9 +453,24 @@ let currentLang;
 try { currentLang = localStorage.getItem('warranto_lang') || (T[sysL] ? sysL : 'it'); } catch(e) { currentLang = T[sysL] ? sysL : 'it'; }
 if (!T[currentLang]) currentLang = 'it';
 
+const FLAGS = {it:'🇮🇹', en:'🇬🇧', es:'🇪🇸', de:'🇩🇪', fr:'🇫🇷', pt:'🇵🇹'};
+
+function toggleLangMenu() {
+  document.getElementById('langDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  if (!document.querySelector('.lang-switcher').contains(e.target)) {
+    document.getElementById('langDropdown').classList.remove('open');
+  }
+});
+
 function setLang(l) {
   currentLang = l;
   try { localStorage.setItem('warranto_lang', l); } catch(e) {}
+  // aggiorna bandiera pulsante principale e chiude il menu
+  document.getElementById('langToggle').textContent = FLAGS[l] || '🌐';
+  document.getElementById('langDropdown').classList.remove('open');
   document.querySelectorAll('.lang-flag').forEach(f => {
     f.classList.toggle('active', f.getAttribute('data-lang') === l);
   });
@@ -448,6 +482,7 @@ function setLang(l) {
 }
 
 setLang(currentLang);
+document.getElementById('langToggle').textContent = FLAGS[currentLang] || '🇮🇹';
 </script>
 </body>
 </html>
