@@ -19,9 +19,13 @@
     .fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
     .fade-in.visible{opacity:1;transform:translateY(0)}
 
-    .lang-switcher{position:fixed;top:22px;left:48px;z-index:600;display:flex;gap:6px;align-items:center}
-    .lang-flag{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);transition:all 0.18s;line-height:1}
-    .lang-flag:hover{border-color:white;background:rgba(255,255,255,0.25)}
+    .lang-switcher{position:fixed;top:16px;left:16px;z-index:600}
+    .lang-btn{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.2);transition:all 0.18s;line-height:1;user-select:none}
+    .lang-btn:hover{background:rgba(255,255,255,0.35)}
+    .lang-dropdown{display:none;flex-direction:column;gap:6px;margin-top:8px;background:rgba(20,40,100,0.88);backdrop-filter:blur(10px);border-radius:12px;padding:8px;border:1px solid rgba(255,255,255,0.2)}
+    .lang-dropdown.open{display:flex}
+    .lang-flag{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);transition:all 0.18s;line-height:1;user-select:none}
+    .lang-flag:hover{border-color:white;background:rgba(255,255,255,0.3)}
     .lang-flag.active{border-color:white;background:rgba(255,255,255,0.35);box-shadow:0 0 0 2px rgba(255,255,255,0.5)}
 
     nav{position:fixed;top:0;right:0;z-index:500;padding:20px 48px;background:transparent}
@@ -76,7 +80,7 @@
 
     @media(max-width:768px){
       nav{padding:14px 18px}.nav-links{gap:12px}.nav-links a{font-size:.74rem}
-      .lang-switcher{left:18px;top:14px}.lang-flag{width:26px;height:26px;font-size:1rem}
+      /* lang-switcher già ottimizzato per mobile */
       .site-hero{grid-template-columns:1fr}.hero-img-half{height:180px}
       .hero-text-half{padding:32px 24px 80px}.hero-appname{font-size:2.8rem}
       .content{padding:48px 24px}.contact-hero-card{padding:40px 24px}
@@ -87,13 +91,17 @@
 </head>
 <body>
 
+  <!-- LANGUAGE SWITCHER — top left, dropdown -->
   <div class="lang-switcher">
-    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
-    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
-    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
-    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
-    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
-    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+    <div class="lang-btn" id="langToggle" onclick="toggleLangMenu()">🇮🇹</div>
+    <div class="lang-dropdown" id="langDropdown">
+      <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
+      <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
+      <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
+      <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
+      <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
+      <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+    </div>
   </div>
 
   <nav>
@@ -121,7 +129,7 @@
     <div class="contact-hero-card fade-in">
       <h2 data-i18n="ct_title">Hai domande? Scrivici.</h2>
       <p data-i18n="ct_body">Che si tratti di un dubbio sull'app, di un suggerimento per migliorarla o di una segnalazione di bug — leggiamo ogni messaggio e rispondiamo personalmente. Siamo uno studio piccolo e ci teniamo a ogni feedback.</p>
-      <a href="mailto:domixia.dev@gmail.com" class="mail-btn">✉️ domixia.dev@gmail.com</a>
+      <a href="/cdn-cgi/l/email-protection#ff9b90929687969ed19b9a89bf98929e9693d19c9092" class="mail-btn">✉️ <span class="__cf_email__" data-cfemail="e3878c8e8a9b8a82cd878695a3848e828a8fcd808c8e">[email&#160;protected]</span></a>
     </div>
 
     <div class="info-grid fade-in">
@@ -161,7 +169,7 @@
     </div>
   </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const T={
 it:{
   nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contatti',
@@ -223,9 +231,23 @@ let lang;
 try { lang = localStorage.getItem('warranto_lang') || (navigator.language||'it').slice(0,2); } catch(e) { lang='it'; }
 if (!T[lang]) lang='it';
 
+const FLAGS = {it:'🇮🇹', en:'🇬🇧', es:'🇪🇸', de:'🇩🇪', fr:'🇫🇷', pt:'🇵🇹'};
+
+function toggleLangMenu() {
+  document.getElementById('langDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  if (!document.querySelector('.lang-switcher').contains(e.target)) {
+    document.getElementById('langDropdown').classList.remove('open');
+  }
+});
+
 function setLang(l){
   lang=l;
   try { localStorage.setItem('warranto_lang',l); } catch(e){}
+  document.getElementById('langToggle').textContent = FLAGS[l] || '🌐';
+  document.getElementById('langDropdown').classList.remove('open');
   document.querySelectorAll('.lang-flag').forEach(b=>b.classList.toggle('active',b.getAttribute('data-lang')===l));
   const t=T[l]||T.en;
   document.querySelectorAll('[data-i18n]').forEach(el=>{
@@ -234,12 +256,8 @@ function setLang(l){
   });
 }
 
-const io=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});
-},{threshold:0.15});
-document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
-
 setLang(lang);
+document.getElementById('langToggle').textContent = FLAGS[lang] || '🇮🇹';
 </script>
 </body>
 </html>
