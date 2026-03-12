@@ -19,6 +19,7 @@
     .fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
     .fade-in.visible{opacity:1;transform:translateY(0)}
 
+    /* --- Language switcher: dropdown style (from 2contatti) --- */
     .lang-switcher{position:fixed;top:16px;left:16px;z-index:600}
     .lang-btn{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.2);transition:all 0.18s;line-height:1;user-select:none}
     .lang-btn:hover{background:rgba(255,255,255,0.35)}
@@ -129,7 +130,7 @@
     <div class="contact-hero-card fade-in">
       <h2 data-i18n="ct_title">Hai domande? Scrivici.</h2>
       <p data-i18n="ct_body">Che si tratti di un dubbio sull'app, di un suggerimento per migliorarla o di una segnalazione di bug — leggiamo ogni messaggio e rispondiamo personalmente. Siamo uno studio piccolo e ci teniamo a ogni feedback.</p>
-      <a href="/cdn-cgi/l/email-protection#ff9b90929687969ed19b9a89bf98929e9693d19c9092" class="mail-btn">✉️ <span class="__cf_email__" data-cfemail="e3878c8e8a9b8a82cd878695a3848e828a8fcd808c8e">[email&#160;protected]</span></a>
+      <a href="mailto:domixia.dev@gmail.com" class="mail-btn">✉️ domixia.dev@gmail.com</a>
     </div>
 
     <div class="info-grid fade-in">
@@ -169,7 +170,7 @@
     </div>
   </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const T={
 it:{
   nav_home:'Home',nav_demo:'Demo',nav_premium:'Premium',nav_info:'Info',nav_privacy:'Privacy',nav_contact:'Contatti',
@@ -254,8 +255,16 @@ function setLang(l){
     const k=el.getAttribute('data-i18n');
     if(t[k]!==undefined) el.innerHTML=t[k];
   });
+  document.documentElement.lang = l;
 }
 
+// Fade-in on scroll
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.15});
+document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
+
+// Init language
 setLang(lang);
 document.getElementById('langToggle').textContent = FLAGS[lang] || '🇮🇹';
 </script>
