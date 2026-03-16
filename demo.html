@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/css/flag-icons.min.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -402,12 +403,12 @@
   <div class="lang-switcher">
     <div class="lang-btn" id="langToggle" onclick="toggleLangMenu()">🇮🇹</div>
     <div class="lang-dropdown" id="langDropdown">
-      <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
-      <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
-      <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
-      <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
-      <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
-      <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano"><span class="fi fi-it"></span></span>
+    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English"><span class="fi fi-gb"></span></span>
+    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español"><span class="fi fi-es"></span></span>
+    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch"><span class="fi fi-de"></span></span>
+    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français"><span class="fi fi-fr"></span></span>
+    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português"><span class="fi fi-pt"></span></span>
     </div>
   </div>
 
@@ -1103,7 +1104,7 @@ try { curLang = localStorage.getItem('warranto_lang') || (LANGS[sysL] ? sysL : '
 let curScreen = 'home', curDet = 0;
 const tr = k => (LANGS[curLang] && LANGS[curLang][k]) || LANGS.it[k] || k;
 
-const FLAGS = {it:'🇮🇹', en:'🇬🇧', es:'🇪🇸', de:'🇩🇪', fr:'🇫🇷', pt:'🇵🇹'};
+const FLAGS = {it:'<span class="fi fi-it"></span>', en:'<span class="fi fi-gb"></span>', es:'<span class="fi fi-es"></span>', de:'<span class="fi fi-de"></span>', fr:'<span class="fi fi-fr"></span>', pt:'<span class="fi fi-pt"></span>'};
 
 function toggleLangMenu() {
   document.getElementById('langDropdown').classList.toggle('open');
@@ -1120,7 +1121,7 @@ function setLang(l) {
   curLang = l;
   try { localStorage.setItem('warranto_lang', l); } catch(e) {}
   // aggiorna bandiera pulsante principale e chiude il menu
-  document.getElementById('langToggle').textContent = FLAGS[l] || '🌐';
+  document.getElementById('langToggle').innerHTML = FLAGS[l] || '🌐';
   document.getElementById('langDropdown').classList.remove('open');
   // update flag buttons
   document.querySelectorAll('.lang-flag').forEach(f => f.classList.toggle('active', f.getAttribute('data-lang') === l));
@@ -1253,7 +1254,7 @@ setInterval(() => {
 
 // init
 setLang(curLang);
-document.getElementById('langToggle').textContent = FLAGS[curLang] || '🇮🇹';
+document.getElementById('langToggle').innerHTML = FLAGS[curLang] || '🇮🇹';
 </script>
 </body>
 </html>
