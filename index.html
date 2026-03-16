@@ -50,6 +50,14 @@
       user-select: none;
     }
     .lang-btn:hover { background: rgba(255,255,255,0.35); }
+    .lang-btn .fi {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: block;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
     .lang-dropdown {
       display: none;
       flex-direction: column;
@@ -74,6 +82,15 @@
     }
     .lang-flag:hover { border-color: white; background: rgba(255,255,255,0.3); }
     .lang-flag.active { border-color: white; background: rgba(255,255,255,0.35); box-shadow: 0 0 0 2px rgba(255,255,255,0.5); }
+    .lang-flag { overflow: hidden; }
+    .lang-flag .fi {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: block;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
 
     /* ══ NAV — top right, no bar ══ */
     nav {
@@ -238,7 +255,7 @@
 
   <!-- LANGUAGE SWITCHER — top left, dropdown -->
   <div class="lang-switcher">
-    <div class="lang-btn" id="langToggle" onclick="toggleLangMenu()">🇮🇹</div>
+    <div class="lang-btn" id="langToggle" onclick="toggleLangMenu()"><span class="fi fi-it"></span></div>
     <div class="lang-dropdown" id="langDropdown">
       <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano"><span class="fi fi-it"></span></span>
       <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English"><span class="fi fi-gb"></span></span>
