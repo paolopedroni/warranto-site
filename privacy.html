@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/css/flag-icons.min.css">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -19,11 +20,14 @@
     .lang-switcher{position:fixed;top:16px;left:16px;z-index:600}
     .lang-btn{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.2);transition:all 0.18s;line-height:1;user-select:none}
     .lang-btn:hover{background:rgba(255,255,255,0.35)}
+    .lang-btn .fi{width:22px;height:22px;border-radius:50%;display:block;background-size:cover;background-position:center;overflow:hidden}
     .lang-dropdown{display:none;flex-direction:column;gap:6px;margin-top:8px;background:rgba(20,40,100,0.88);backdrop-filter:blur(10px);border-radius:12px;padding:8px;border:1px solid rgba(255,255,255,0.2)}
     .lang-dropdown.open{display:flex}
     .lang-flag{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);transition:all 0.18s;line-height:1;user-select:none}
     .lang-flag:hover{border-color:white;background:rgba(255,255,255,0.3)}
     .lang-flag.active{border-color:white;background:rgba(255,255,255,0.35);box-shadow:0 0 0 2px rgba(255,255,255,0.5)}
+    .lang-flag{overflow:hidden}
+    .lang-flag .fi{width:20px;height:20px;border-radius:50%;display:block;background-size:cover;background-position:center;overflow:hidden}
     nav{position:fixed;top:0;right:0;z-index:500;padding:20px 48px;background:transparent}
     .nav-links{display:flex;gap:22px;list-style:none;align-items:center}
     .nav-links a{text-decoration:none;font-size:.87rem;font-weight:500;color:white;opacity:.82;text-shadow:0 1px 8px rgba(0,0,0,.6);transition:opacity .2s}
@@ -75,14 +79,14 @@
 
 <!-- LANGUAGE SWITCHER — top left, dropdown -->
 <div class="lang-switcher">
-  <div class="lang-btn" id="langToggle" onclick="toggleLangMenu()">🇮🇹</div>
+  <div class="lang-btn" id="langToggle" onclick="toggleLangMenu()"><span class="fi fi-it"></span></div>
   <div class="lang-dropdown" id="langDropdown">
-    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</span>
-    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</span>
-    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</span>
-    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</span>
-    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</span>
-    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português">🇵🇹</span>
+    <span class="lang-flag active" data-lang="it" onclick="setLang('it')" title="Italiano"><span class="fi fi-it"></span></span>
+    <span class="lang-flag" data-lang="en" onclick="setLang('en')" title="English"><span class="fi fi-gb"></span></span>
+    <span class="lang-flag" data-lang="es" onclick="setLang('es')" title="Español"><span class="fi fi-es"></span></span>
+    <span class="lang-flag" data-lang="de" onclick="setLang('de')" title="Deutsch"><span class="fi fi-de"></span></span>
+    <span class="lang-flag" data-lang="fr" onclick="setLang('fr')" title="Français"><span class="fi fi-fr"></span></span>
+    <span class="lang-flag" data-lang="pt" onclick="setLang('pt')" title="Português"><span class="fi fi-pt"></span></span>
   </div>
 </div>
 
@@ -524,7 +528,7 @@ const PH_I18N = {
   pt:{ph_title:'Política de <em>privacidade</em>', ph_sub:'Como o Warranto gere os seus dados. Versão curta: ficam no seu telemóvel.'},
 };
 
-const FLAGS = {it:'🇮🇹', en:'🇬🇧', es:'🇪🇸', de:'🇩🇪', fr:'🇫🇷', pt:'🇵🇹'};
+const FLAGS = {it:'<span class="fi fi-it"></span>', en:'<span class="fi fi-gb"></span>', es:'<span class="fi fi-es"></span>', de:'<span class="fi fi-de"></span>', fr:'<span class="fi fi-fr"></span>', pt:'<span class="fi fi-pt"></span>'};
 
 let lang;
 try { lang = localStorage.getItem('warranto_lang') || (navigator.language||'it').slice(0,2); } catch(e) { lang='it'; }
@@ -543,7 +547,7 @@ document.addEventListener('click', function(e) {
 function setLang(l) {
   lang = l;
   try { localStorage.setItem('warranto_lang', l); } catch(e) {}
-  document.getElementById('langToggle').textContent = FLAGS[l] || '🌐';
+  document.getElementById('langToggle').innerHTML = FLAGS[l] || '🌐';
   document.getElementById('langDropdown').classList.remove('open');
   document.querySelectorAll('.lang-flag').forEach(b => b.classList.toggle('active', b.getAttribute('data-lang') === l));
   // nav + footer links
@@ -565,7 +569,7 @@ function setLang(l) {
 }
 
 setLang(lang);
-document.getElementById('langToggle').textContent = FLAGS[lang] || '🇮🇹';
+document.getElementById('langToggle').innerHTML = FLAGS[lang] || '<span class="fi fi-it"></span>';
 </script>
 </body>
 </html>
