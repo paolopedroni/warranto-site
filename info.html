@@ -309,10 +309,6 @@ const io = new IntersectionObserver(entries => {
 }, { threshold: 0.12 });
 document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
 
-let lang;
-try { lang = localStorage.getItem('warranto_lang') || (navigator.language || 'it').slice(0, 2); } catch(e) { lang = 'it'; }
-if (!T[lang]) lang = 'it';
-
 setLang(lang);
 document.getElementById('langToggle').innerHTML = FLAGS[lang] || '<span class="fi fi-it"></span>';
 </script>
